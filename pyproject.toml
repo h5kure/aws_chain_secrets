@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aws_chain_secrets"
+version = "1.0.3"
+description = "This aims to enable the use of one or more secrets from AWS SecretsManager."
+readme = "README.rst"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Hyouk Oh", email = "h.5.kure@gmail.com" }]
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+dependencies = ["boto3"]
+
+[project.urls]
+Homepage = "https://github.com/h5kure/aws_chain_secrets"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aws_chain_secrets"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/aws_chain_secrets", "/tests", "/README.rst", "/LICENSE"]
