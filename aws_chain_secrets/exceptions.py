@@ -31,7 +31,7 @@ class InternalServiceErrorException(SecretsManagerException):
 
 
 class InvalidParameterException(SecretsManagerException):
-    DEFAULT_MESSAGE = "You provided an invalid value for a parameter.",
+    DEFAULT_MESSAGE = "You provided an invalid value for a parameter."
 
 
 class InvalidRequestException(SecretsManagerException):

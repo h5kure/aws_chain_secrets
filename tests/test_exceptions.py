@@ -44,8 +44,7 @@ class SecretsManagerExceptionTestCase(unittest.TestCase):
             with self.subTest(exception_class=exception_class.__name__):
                 self.assertTrue(issubclass(exception_class, SecretsManagerException))
 
-    # KNOWN BUG(B1): 4단계에서 수정. DEFAULT_MESSAGE 끝의 쉼표 때문에 문자열이 아니라 tuple이다.
-    def test_invalid_parameter_default_message_is_currently_a_tuple(self):
+    def test_invalid_parameter_exception_uses_default_message_string(self):
         message = "You provided an invalid value for a parameter."
-        self.assertEqual((message,), InvalidParameterException.DEFAULT_MESSAGE)
-        self.assertEqual(str((message,)), str(InvalidParameterException()))
+        self.assertEqual(message, InvalidParameterException.DEFAULT_MESSAGE)
+        self.assertEqual(message, str(InvalidParameterException()))
