@@ -40,5 +40,7 @@ class Client:
         self._client = self._create_client()
 
     def disconnect(self):
+        if self._client is None:
+            return
         self._client.close()
-        del self._client
+        self._client = None

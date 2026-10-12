@@ -214,8 +214,7 @@ class SecretsManagerTestCase(unittest.TestCase):
         with SecretsManager(self.REGION_NAME, 'app') as secrets:
             pass
 
-        # The current disconnect() deletes the attribute (root cause of B3).
-        self.assertFalse(hasattr(secrets, '_client'))
+        self.assertIsNone(secrets._client)
 
     def test_update_with_secret_name_sends_that_secret_as_json(self):
         secrets = self._enter({'base': {'a': '1'}, 'override': {'b': '2'}})
@@ -230,7 +229,8 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self._assert_update_sends(secrets, {'base': {'a': '1'}, 'override': {'b': '2'}})
 
-    # KNOWN BUG(B3): to be fixed in stage 4. Exiting deletes the _client attribute.
+    # KNOWN BUG(B3): to be fixed in stage 4. After exit _client is None, so update() fails with an
+    # unhelpful AttributeError. The desired behavior (clear error or reconnect) is not decided yet.
     def test_update_after_exit_currently_raises_attribute_error(self):
         self._stub_secret_string('app', {'a': '1'})
         with SecretsManager(self.REGION_NAME, 'app') as secrets:

@@ -42,22 +42,21 @@ class ClientTestCase(unittest.TestCase):
             self.assertIs(self.client, entered)
             self.assertIsNotNone(self.client._client)
 
-    # This behavior is the root cause of B3. The expectation may change when B3 is fixed.
-    def test_context_manager_removes_client_on_exit(self):
+    def test_context_manager_clears_client_on_exit(self):
         with self.client:
             pass
 
-        self.assertFalse(hasattr(self.client, '_client'))
+        self.assertIsNone(self.client._client)
 
-    # KNOWN BUG(B3): to be fixed in stage 4. _client is None before connect, so close() cannot be called.
-    def test_disconnect_before_connect_currently_raises_attribute_error(self):
-        with self.assertRaises(AttributeError):
-            self.client.disconnect()
+    def test_disconnect_before_connect_does_nothing(self):
+        self.client.disconnect()
 
-    # KNOWN BUG(B3): to be fixed in stage 4. The first disconnect() deletes the _client attribute.
-    def test_second_disconnect_currently_raises_attribute_error(self):
+        self.assertIsNone(self.client._client)
+
+    def test_second_disconnect_does_nothing(self):
         self.client.connect()
         self.client.disconnect()
 
-        with self.assertRaises(AttributeError):
-            self.client.disconnect()
+        self.client.disconnect()
+
+        self.assertIsNone(self.client._client)
