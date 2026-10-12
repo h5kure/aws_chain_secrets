@@ -121,7 +121,8 @@ class SecretsManager(Client):
         try:
             response = self._client.get_secret_value(SecretId=secret_name)
         except ClientError as e:
-            raise SecretsManagerException.from_code(e.response['Error']['Code'])
+            error = e.response['Error']
+            raise SecretsManagerException.from_code(error['Code'], error.get('Message'))
         else:
             if 'SecretString' in response:
                 return json.loads(response['SecretString'])

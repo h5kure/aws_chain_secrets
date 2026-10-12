@@ -200,15 +200,13 @@ class SecretsManagerTestCase(unittest.TestCase):
                 pass
         self.assertIs(SecretsManagerException, type(context.exception))
 
-    # KNOWN BUG(B2): to be fixed in stage 4. _get_secrets passes only the error code to from_code,
-    # so the message from AWS is replaced by the default message.
-    def test_client_error_message_is_currently_discarded(self):
+    def test_client_error_message_is_passed_to_exception(self):
         self._stub_client_error('app', 'ResourceNotFoundException', message="Secrets Manager can't find 'app'.")
 
         with self.assertRaises(ResourceNotFoundException) as context:
             with SecretsManager(self.REGION_NAME, 'app'):
                 pass
-        self.assertEqual(ResourceNotFoundException.DEFAULT_MESSAGE, str(context.exception))
+        self.assertEqual("Secrets Manager can't find 'app'.", str(context.exception))
 
     def test_exit_disconnects_client(self):
         self._stub_secret_string('app', {})
