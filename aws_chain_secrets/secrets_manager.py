@@ -83,6 +83,7 @@ class SecretsManager(Client):
                     secret_name = name
                 if key in self._secrets[name]:
                     secret_name = name
+                    break
         self._secrets[secret_name][key] = value
 
     def keys(self):

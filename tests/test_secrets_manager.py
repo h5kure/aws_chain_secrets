@@ -266,12 +266,10 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self._assert_update_sends(secrets, {'base': {'key': 'changed'}, 'override': {'b': '2'}})
 
-    # KNOWN BUG(B5): to be fixed in stage 4. The lookup loop keeps overwriting the target,
-    # so the value goes to the lowest-priority secret and get() still returns the old value.
-    def test_set_none_with_key_in_multiple_secrets_currently_writes_lowest_priority(self):
+    def test_set_none_with_key_in_multiple_secrets_writes_highest_priority(self):
         secrets = self._enter({'base': {'key': 'base'}, 'override': {'key': 'override'}})
 
         secrets.set(None, 'key', 'changed')
 
-        self.assertEqual('override', secrets.get('key'))
-        self._assert_update_sends(secrets, {'base': {'key': 'changed'}, 'override': {'key': 'override'}})
+        self.assertEqual('changed', secrets.get('key'))
+        self._assert_update_sends(secrets, {'base': {'key': 'base'}, 'override': {'key': 'changed'}})
