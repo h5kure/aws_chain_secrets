@@ -10,13 +10,13 @@ readme = "README.rst"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Hyouk Oh", email = "h.5.kure@gmail.com" }]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
 dependencies = ["boto3"]

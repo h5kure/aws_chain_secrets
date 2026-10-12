@@ -23,6 +23,8 @@ the value of the specified B entry.
 Install
 -------
 
+Python 3.10 or later is required.
+
 .. code-block:: bash
 
     $ python -m pip install aws_chain_secrets
