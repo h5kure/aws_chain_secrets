@@ -1,4 +1,3 @@
-import base64
 import json
 from collections import ChainMap
 from collections.abc import ItemsView, KeysView, ValuesView
@@ -126,7 +125,7 @@ class SecretsManager(Client):
         else:
             if "SecretString" in response:
                 return json.loads(response["SecretString"])
-            return json.loads(base64.b64decode(response["SecretBinary"]))
+            return json.loads(response["SecretBinary"])
 
     def __call__(self, key: str, *, default: Any = null, casting_type: type[Any] = str):
         return self.get(key, default=default, casting_type=casting_type)

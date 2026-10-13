@@ -1,5 +1,4 @@
 import base64
-import binascii
 import json
 import unittest
 from unittest.mock import patch
@@ -163,18 +162,17 @@ class SecretsManagerTestCase(unittest.TestCase):
         self.assertEqual(["base", "override", 5432], list(secrets.values()))
         self.assertEqual([("base_only", "base"), ("key", "override"), ("port", 5432)], list(secrets.items()))
 
-    def test_secret_binary_base64_encoded_json_is_decoded(self):
-        self._stub_secret_binary("app", base64.b64encode(b'{"host": "localhost"}'))
+    # botocore already base64-decodes blob fields, so SecretBinary arrives as raw bytes.
+    def test_secret_binary_raw_bytes_are_parsed_as_json(self):
+        self._stub_secret_binary("app", b'{"host": "localhost"}')
 
         with SecretsManager(self.REGION_NAME, "app") as secrets:
             self.assertEqual({"host": "localhost"}, dict(secrets.items()))
 
-    # KNOWN BUG(B6): to be fixed in stage 4. botocore already base64-decodes blob fields,
-    # so a real SecretBinary arrives as raw bytes and decoding it again fails.
-    def test_secret_binary_raw_bytes_currently_raise_binascii_error(self):
-        self._stub_secret_binary("app", b'{"host": "localhost"}')
+    def test_secret_binary_holding_base64_text_is_no_longer_decoded(self):
+        self._stub_secret_binary("app", base64.b64encode(b'{"host": "localhost"}'))
 
-        with self.assertRaises(binascii.Error):
+        with self.assertRaises(ValueError):
             with SecretsManager(self.REGION_NAME, "app"):
                 pass
 

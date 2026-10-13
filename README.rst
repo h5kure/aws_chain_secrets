@@ -39,6 +39,8 @@ How to use
 
     If your credentials installed or set to environment, you can omit credentials when initialize `SecretsManager`.
 
+    Each secret must hold a JSON object, either as `SecretString` or as `SecretBinary` (raw bytes).
+
 connect and fetch manually
 """"""""""""""""""""""""""
 

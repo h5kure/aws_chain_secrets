@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Migration:** pass at least one secret name, or skip creating `SecretsManager` when there is none.
 - Exceptions converted from an AWS `ClientError` keep it as `__cause__`.
 - The `KeyError` from `get()` no longer shows the internal lookup error as its context.
+- `SecretBinary` is parsed as the raw bytes boto3 returns. Previously it was base64-decoded a second time,
+  so a binary secret stored with boto3 as plain JSON bytes failed with `binascii.Error`.
+  **Affected:** binary secrets that hold base64 text, for example stored with `SecretBinary=base64.b64encode(...)`
+  or with AWS CLI v1 `--secret-binary "<base64>"`. Reading them now fails with `ValueError`.
+  **Migration:** store the JSON bytes themselves as `SecretBinary`, or store the JSON as `SecretString`.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.
