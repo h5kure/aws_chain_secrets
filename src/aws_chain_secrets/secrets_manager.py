@@ -16,8 +16,6 @@ class Null:
     class to represent null type
     """
 
-    pass
-
 
 null = Null()
 
