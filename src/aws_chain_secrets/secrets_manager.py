@@ -36,7 +36,7 @@ class SecretsManager(Client):
         """
         self.secret_names = secret_names
         super().__init__("secretsmanager", region_name, aws_access_key_id, aws_secret_access_key)
-        self._secrets = {secret_name: {} for secret_name in secret_names}
+        self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
     def get(self, key, *, default: Any = null, casting_type: type[Any] = str):

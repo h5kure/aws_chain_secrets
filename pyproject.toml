@@ -68,7 +68,7 @@ module = "aws_chain_secrets.client"
 disable_error_code = ["call-overload"]
 
 [[tool.mypy.overrides]]
-# _secrets lacks an annotation, set(None, ...) indexes with str | None,
+# set(None, ...) indexes with str | None,
 # and _client is BaseClient | None without service methods.
 module = "aws_chain_secrets.secrets_manager"
-disable_error_code = ["var-annotated", "index", "union-attr"]
+disable_error_code = ["index", "union-attr"]
