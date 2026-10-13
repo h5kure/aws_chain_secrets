@@ -50,7 +50,7 @@ class SecretsManager(Client):
             value = self._combined[key]
         except KeyError:
             if isinstance(default, Null):
-                raise KeyError(f"{repr(key)} not found. Please check secret value in AWS Secrets Manager.")
+                raise KeyError(f"{key!r} not found. Please check secret value in AWS Secrets Manager.")
             return default
         return cast(value, casting_type)
 

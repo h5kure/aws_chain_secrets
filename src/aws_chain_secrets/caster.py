@@ -21,7 +21,7 @@ def string_to_boolean(value: str) -> bool:
         return True
     if value in FALSE_STRINGS:
         return False
-    raise ValueError(f"invalid truth value {repr(value)}")
+    raise ValueError(f"invalid truth value {value!r}")
 
 
 def cast_boolean(value: Any) -> bool:
@@ -49,7 +49,7 @@ def cast(value: str, casting_type: type[Any] | None = None) -> Any:
         args = get_args(casting_type)
         if origin in (set, list, tuple, bytes, bytearray):
             return Sequence(cast_type=args[0] if args else str, wrapper=origin)(value)
-        raise NotImplementedError(f"cannot cast to {repr(casting_type)}")
+        raise NotImplementedError(f"cannot cast to {casting_type!r}")
     return casting_type(value)
 
 
