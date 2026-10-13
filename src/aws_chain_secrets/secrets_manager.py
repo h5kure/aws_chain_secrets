@@ -1,6 +1,7 @@
 import base64
 import json
 from collections import ChainMap
+from collections.abc import ItemsView, KeysView, ValuesView
 from typing import Any
 
 from botocore.exceptions import ClientError
@@ -39,7 +40,7 @@ class SecretsManager(Client):
         self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def get(self, key, *, default: Any = null, casting_type: type[Any] = str):
+    def get(self, key: str, *, default: Any = null, casting_type: type[Any] = str):
         """
         get secret value
         :param key: key value to search
@@ -55,7 +56,7 @@ class SecretsManager(Client):
             return default
         return cast(value, casting_type)
 
-    def set(self, secret_name: str | None, key, value):
+    def set(self, secret_name: str | None, key: str, value) -> None:
         """
         set a `key: value` to the specified secret
         :param secret_name: secret_name of AWS Secrets Manager.
@@ -70,16 +71,16 @@ class SecretsManager(Client):
         # TODO(stage 4): B7 - secret_name is still None when there are no secrets.
         self._secrets[secret_name][key] = value  # type: ignore[index]
 
-    def keys(self):
+    def keys(self) -> KeysView[str]:
         return self._combined.keys()
 
-    def values(self):
+    def values(self) -> ValuesView[Any]:
         return self._combined.values()
 
-    def items(self):
+    def items(self) -> ItemsView[str, Any]:
         return self._combined.items()
 
-    def fetch(self):
+    def fetch(self) -> None:
         """
         get secrets from AWS and update
         """
@@ -87,7 +88,7 @@ class SecretsManager(Client):
             self._secrets[secret_name].clear()
             self._secrets[secret_name].update(self._get_secrets(secret_name))
 
-    def update(self, secret_name: str | None = None):
+    def update(self, secret_name: str | None = None) -> None:
         """
         update specified secrets from local to AWS
         :param secret_name: secret name of AWS Secrets Manager. If `None` is given, updates the entire secrets.
@@ -127,10 +128,10 @@ class SecretsManager(Client):
                 return json.loads(response["SecretString"])
             return json.loads(base64.b64decode(response["SecretBinary"]))
 
-    def __call__(self, key, *, default: Any = null, casting_type: type[Any] = str):
+    def __call__(self, key: str, *, default: Any = null, casting_type: type[Any] = str):
         return self.get(key, default=default, casting_type=casting_type)
 
-    def __enter__(self):
+    def __enter__(self) -> "SecretsManager":
         super().__enter__()
         self.fetch()
         return self
