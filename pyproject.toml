@@ -50,11 +50,10 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 # Existing violations, recorded so the rule set can be enabled now.
-# TODO(stage 3): modernize annotations (typing.Type -> type, Optional[X] -> X | None).
+# TODO(stage 3): modernize annotations (typing.Type -> type).
 # TODO(stage 4): B904 adds exception chaining, which changes __cause__ (behavioral).
 "src/aws_chain_secrets/caster.py" = ["UP006", "UP035"]
-"src/aws_chain_secrets/client.py" = ["UP045"]
-"src/aws_chain_secrets/secrets_manager.py" = ["UP006", "UP035", "UP045", "B904"]
+"src/aws_chain_secrets/secrets_manager.py" = ["UP006", "UP035", "B904"]
 
 [tool.mypy]
 files = ["src"]

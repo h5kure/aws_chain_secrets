@@ -1,7 +1,7 @@
 import base64
 import json
 from collections import ChainMap
-from typing import Any, Optional, Type
+from typing import Any, Type
 
 from botocore.exceptions import ClientError
 
@@ -51,7 +51,7 @@ class SecretsManager(Client):
             return default
         return cast(value, casting_type)
 
-    def set(self, secret_name: Optional[str], key, value):
+    def set(self, secret_name: str | None, key, value):
         """
         set a `key: value` to the specified secret
         :param secret_name: secret_name of AWS Secrets Manager.
@@ -87,7 +87,7 @@ class SecretsManager(Client):
             self._secrets[secret_name].clear()
             self._secrets[secret_name].update(self._get_secrets(secret_name))
 
-    def update(self, secret_name: Optional[str] = None):
+    def update(self, secret_name: str | None = None):
         """
         update specified secrets from local to AWS
         :param secret_name: secret name of AWS Secrets Manager. If `None` is given, updates the entire secrets.

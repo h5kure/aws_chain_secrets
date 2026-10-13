@@ -1,5 +1,3 @@
-from typing import Optional
-
 import boto3
 from botocore.client import BaseClient
 
@@ -16,7 +14,7 @@ class Client:
         self.region_name = region_name
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
-        self._client: Optional[BaseClient] = None
+        self._client: BaseClient | None = None
 
     def connect(self):
         self._client = self._create_client()
