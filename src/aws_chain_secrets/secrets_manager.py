@@ -66,12 +66,7 @@ class SecretsManager(Client):
         :param value: value of map
         """
         if secret_name is None:
-            for name in reversed(self._secrets.keys()):
-                if secret_name is None:
-                    secret_name = name
-                if key in self._secrets[name]:
-                    secret_name = name
-                    break
+            secret_name = self._find_secret_name_for(key)
         self._secrets[secret_name][key] = value
 
     def keys(self):
@@ -101,6 +96,16 @@ class SecretsManager(Client):
                 self.update(name)
         else:
             self._client.update_secret(SecretId=secret_name, SecretString=json.dumps(self._secrets[secret_name]))
+
+    def _find_secret_name_for(self, key: str) -> str | None:
+        """
+        find the secret that `set(None, key, value)` writes to
+        :param key: key of map
+        :return: the highest priority secret containing key, otherwise the highest priority secret.
+         `None` if there are no secrets.
+        """
+        names = list(reversed(self._secrets))
+        return next((name for name in names if key in self._secrets[name]), names[0] if names else None)
 
     def _get_secrets(self, secret_name: str) -> dict:
         """
