@@ -30,7 +30,8 @@ class Client:
         self._client = None
 
     def _create_client(self) -> BaseClient:
-        return boto3.session.Session().client(
+        # Client serves any service, so service_name is a plain str; the stubs only accept literal names.
+        return boto3.session.Session().client(  # type: ignore[call-overload]
             service_name=self.service_name,
             region_name=self.region_name,
             aws_access_key_id=self.aws_access_key_id,

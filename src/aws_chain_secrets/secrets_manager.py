@@ -67,7 +67,8 @@ class SecretsManager(Client):
         """
         if secret_name is None:
             secret_name = self._find_secret_name_for(key)
-        self._secrets[secret_name][key] = value
+        # TODO(stage 4): B7 - secret_name is still None when there are no secrets.
+        self._secrets[secret_name][key] = value  # type: ignore[index]
 
     def keys(self):
         return self._combined.keys()
@@ -95,7 +96,10 @@ class SecretsManager(Client):
             for name in self._secrets.keys():
                 self.update(name)
         else:
-            self._client.update_secret(SecretId=secret_name, SecretString=json.dumps(self._secrets[secret_name]))
+            # BaseClient has no typed service methods. TODO(stage 4): B3 - _client is None when not connected.
+            self._client.update_secret(  # type: ignore[union-attr]
+                SecretId=secret_name, SecretString=json.dumps(self._secrets[secret_name])
+            )
 
     def _find_secret_name_for(self, key: str) -> str | None:
         """
@@ -113,7 +117,8 @@ class SecretsManager(Client):
         :param secret_name: secret name of AWS Secrets Manager
         """
         try:
-            response = self._client.get_secret_value(SecretId=secret_name)
+            # BaseClient has no typed service methods. TODO(stage 4): B3 - _client is None when not connected.
+            response = self._client.get_secret_value(SecretId=secret_name)  # type: ignore[union-attr]
         except ClientError as e:
             error = e.response["Error"]
             raise SecretsManagerException.from_code(error["Code"], error.get("Message"))

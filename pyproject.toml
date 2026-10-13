@@ -59,16 +59,3 @@ python_version = "3.10"
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-
-# Existing errors, recorded so type checking can be enabled now.
-# TODO(stage 3): fix these and remove the overrides below.
-[[tool.mypy.overrides]]
-# Session.client() overloads need a Literal service name, but service_name is a plain str.
-module = "aws_chain_secrets.client"
-disable_error_code = ["call-overload"]
-
-[[tool.mypy.overrides]]
-# set(None, ...) indexes with str | None,
-# and _client is BaseClient | None without service methods.
-module = "aws_chain_secrets.secrets_manager"
-disable_error_code = ["index", "union-attr"]
