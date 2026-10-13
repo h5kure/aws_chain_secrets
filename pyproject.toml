@@ -56,6 +56,11 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 files = ["src"]
 python_version = "3.10"
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
+strict = true
+# Annotations are written where they inform readers and users (py.typed public API), not everywhere:
+# an unannotated function is still checked (check_untyped_defs), and `-> Any` would add nothing.
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+# json.loads and boto3 return Any; narrowing it would mean restructuring code only for the checker.
+warn_return_any = false

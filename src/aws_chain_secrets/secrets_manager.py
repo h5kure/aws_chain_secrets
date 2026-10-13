@@ -112,7 +112,7 @@ class SecretsManager(Client):
         names = list(reversed(self._secrets))
         return next((name for name in names if key in self._secrets[name]), names[0] if names else None)
 
-    def _get_secrets(self, secret_name: str) -> dict:
+    def _get_secrets(self, secret_name: str) -> dict[str, Any]:
         """
         get secrets from AWS
         :param secret_name: secret name of AWS Secrets Manager
