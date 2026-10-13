@@ -30,10 +30,10 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["aws_chain_secrets"]
+packages = ["src/aws_chain_secrets"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/aws_chain_secrets", "/tests", "/README.rst", "/LICENSE"]
+include = ["/src", "/tests", "/README.rst", "/LICENSE"]
 
 [tool.pytest]
 testpaths = ["tests"]
