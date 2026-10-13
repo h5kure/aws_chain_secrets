@@ -23,7 +23,11 @@ null = Null()
 
 class SecretsManager(Client):
     def __init__(
-        self, region_name: str, *secret_names: str, aws_access_key_id: str = None, aws_secret_access_key: str = None
+        self,
+        region_name: str,
+        *secret_names: str,
+        aws_access_key_id: str | None = None,
+        aws_secret_access_key: str | None = None,
     ):
         """
         initial setup

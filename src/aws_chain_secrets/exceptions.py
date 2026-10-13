@@ -1,11 +1,11 @@
 class SecretsManagerException(Exception):
     DEFAULT_MESSAGE = "Unknown error occurred."
 
-    def __init__(self, message: str = None):
+    def __init__(self, message: str | None = None):
         super().__init__(message or self.DEFAULT_MESSAGE)
 
     @classmethod
-    def from_code(cls, code: str, message: str = None) -> "SecretsManagerException":
+    def from_code(cls, code: str, message: str | None = None) -> "SecretsManagerException":
         if code == "DecryptionFailureException":
             return DecryptionFailureException(message)
         elif code == "InternalServiceErrorException":

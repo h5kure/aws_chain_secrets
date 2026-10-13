@@ -29,7 +29,7 @@ def cast_boolean(value: Any) -> bool:
     return string_to_boolean(value)
 
 
-def cast(value: str, casting_type: type[Any] = None) -> Any:
+def cast(value: str, casting_type: type[Any] | None = None) -> Any:
     """
     string value to typed value
     :param value: original string

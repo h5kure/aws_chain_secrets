@@ -63,16 +63,6 @@ warn_unused_ignores = true
 # Existing errors, recorded so type checking can be enabled now.
 # TODO(stage 3): fix these and remove the overrides below.
 [[tool.mypy.overrides]]
-# Parameters such as `message: str = None` rely on implicit Optional.
-module = [
-    "aws_chain_secrets.caster",
-    "aws_chain_secrets.client",
-    "aws_chain_secrets.exceptions",
-    "aws_chain_secrets.secrets_manager",
-]
-implicit_optional = true
-
-[[tool.mypy.overrides]]
 # Session.client() overloads need a Literal service name, but service_name is a plain str.
 module = "aws_chain_secrets.client"
 disable_error_code = ["call-overload"]

@@ -8,7 +8,11 @@ class Client:
     """
 
     def __init__(
-        self, service_name: str, region_name: str, aws_access_key_id: str = None, aws_secret_access_key: str = None
+        self,
+        service_name: str,
+        region_name: str,
+        aws_access_key_id: str | None = None,
+        aws_secret_access_key: str | None = None,
     ):
         self.service_name = service_name
         self.region_name = region_name
