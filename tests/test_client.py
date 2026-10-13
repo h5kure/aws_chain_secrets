@@ -4,10 +4,10 @@ from aws_chain_secrets.client import Client
 
 
 class ClientTestCase(unittest.TestCase):
-    SERVICE_NAME = 'secretsmanager'
-    REGION_NAME = 'ap-northeast-2'
-    AWS_ACCESS_KEY_ID = 'testing-access-key'
-    AWS_SECRET_ACCESS_KEY = 'testing-secret-key'
+    SERVICE_NAME = "secretsmanager"
+    REGION_NAME = "ap-northeast-2"
+    AWS_ACCESS_KEY_ID = "testing-access-key"
+    AWS_SECRET_ACCESS_KEY = "testing-secret-key"
 
     def setUp(self):
         self.client = Client(

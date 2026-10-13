@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from types import GenericAlias
 from typing import Any, Type, get_args, get_origin
 
-TRUE_STRINGS = ('y', 'yes', 't', 'true', 'on', '1')
-FALSE_STRINGS = ('', 'n', 'no', 'f', 'false', 'off', '0')
+TRUE_STRINGS = ("y", "yes", "t", "true", "on", "1")
+FALSE_STRINGS = ("", "n", "no", "f", "false", "off", "0")
 
 
 def string_to_boolean(value: str) -> bool:
@@ -58,8 +58,9 @@ class Sequence:
     """
     Helper to cast Sequence (list, tuple, bytes, bytearray) and Set(set, frozenset)
     """
+
     cast_type: Type = str
-    delimiter: str = ','
+    delimiter: str = ","
     strip: str = string.whitespace
     wrapper: Type = list
 

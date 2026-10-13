@@ -1,5 +1,3 @@
-
-
 class SecretsManagerException(Exception):
     DEFAULT_MESSAGE = "Unknown error occurred."
 
@@ -7,16 +5,16 @@ class SecretsManagerException(Exception):
         super().__init__(message or self.DEFAULT_MESSAGE)
 
     @classmethod
-    def from_code(cls, code: str, message: str = None) -> 'SecretsManagerException':
-        if code == 'DecryptionFailureException':
+    def from_code(cls, code: str, message: str = None) -> "SecretsManagerException":
+        if code == "DecryptionFailureException":
             return DecryptionFailureException(message)
-        elif code == 'InternalServiceErrorException':
+        elif code == "InternalServiceErrorException":
             return InternalServiceErrorException(message)
-        elif code == 'InvalidParameterException':
+        elif code == "InvalidParameterException":
             return InvalidParameterException(message)
-        elif code == 'InvalidRequestException':
+        elif code == "InvalidRequestException":
             return InvalidRequestException(message)
-        elif code == 'ResourceNotFoundException':
+        elif code == "ResourceNotFoundException":
             return ResourceNotFoundException(message)
         else:
             return cls(message)

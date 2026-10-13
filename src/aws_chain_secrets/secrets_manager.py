@@ -14,6 +14,7 @@ class Null:
     """
     class to represent null type
     """
+
     pass
 
 
@@ -22,11 +23,7 @@ null = Null()
 
 class SecretsManager(Client):
     def __init__(
-            self,
-            region_name: str,
-            *secret_names: str,
-            aws_access_key_id: str = None,
-            aws_secret_access_key: str = None
+        self, region_name: str, *secret_names: str, aws_access_key_id: str = None, aws_secret_access_key: str = None
     ):
         """
         initial setup
@@ -34,12 +31,7 @@ class SecretsManager(Client):
         :param secret_names: The secret names that come later has higher precedence..
         """
         self.secret_names = secret_names
-        super().__init__(
-            "secretsmanager",
-            region_name,
-            aws_access_key_id,
-            aws_secret_access_key
-        )
+        super().__init__("secretsmanager", region_name, aws_access_key_id, aws_secret_access_key)
         self._secrets = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
@@ -122,11 +114,9 @@ class SecretsManager(Client):
         try:
             response = self._client.get_secret_value(SecretId=secret_name)
         except ClientError as e:
-            error = e.response['Error']
-            raise SecretsManagerException.from_code(error['Code'], error.get('Message'))
+            error = e.response["Error"]
+            raise SecretsManagerException.from_code(error["Code"], error.get("Message"))
         else:
-            if 'SecretString' in response:
-                return json.loads(response['SecretString'])
-            return json.loads(base64.b64decode(response['SecretBinary']))
-
-
+            if "SecretString" in response:
+                return json.loads(response["SecretString"])
+            return json.loads(base64.b64decode(response["SecretBinary"]))

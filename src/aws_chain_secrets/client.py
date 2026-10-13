@@ -8,12 +8,9 @@ class Client:
     """
     wrapper for AWS client
     """
+
     def __init__(
-            self,
-            service_name: str,
-            region_name: str,
-            aws_access_key_id: str = None,
-            aws_secret_access_key: str = None
+        self, service_name: str, region_name: str, aws_access_key_id: str = None, aws_secret_access_key: str = None
     ):
         self.service_name = service_name
         self.region_name = region_name
@@ -33,7 +30,7 @@ class Client:
             service_name=self.service_name,
             region_name=self.region_name,
             aws_access_key_id=self.aws_access_key_id,
-            aws_secret_access_key=self.aws_secret_access_key
+            aws_secret_access_key=self.aws_secret_access_key,
         )
 
     def connect(self):

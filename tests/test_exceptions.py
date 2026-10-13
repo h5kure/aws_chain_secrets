@@ -12,13 +12,13 @@ from aws_chain_secrets.exceptions import (
 
 class SecretsManagerExceptionTestCase(unittest.TestCase):
     KNOWN_CODE_TO_EXCEPTION = {
-        'DecryptionFailureException': DecryptionFailureException,
-        'InternalServiceErrorException': InternalServiceErrorException,
-        'InvalidParameterException': InvalidParameterException,
-        'InvalidRequestException': InvalidRequestException,
-        'ResourceNotFoundException': ResourceNotFoundException,
+        "DecryptionFailureException": DecryptionFailureException,
+        "InternalServiceErrorException": InternalServiceErrorException,
+        "InvalidParameterException": InvalidParameterException,
+        "InvalidRequestException": InvalidRequestException,
+        "ResourceNotFoundException": ResourceNotFoundException,
     }
-    UNKNOWN_CODE = 'UnknownCode'
+    UNKNOWN_CODE = "UnknownCode"
 
     def test_base_exception_uses_default_message_when_message_is_none(self):
         self.assertEqual("Unknown error occurred.", str(SecretsManagerException()))
