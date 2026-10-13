@@ -48,11 +48,6 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
-[tool.ruff.lint.per-file-ignores]
-# Existing violations, recorded so the rule set can be enabled now.
-# TODO(stage 4): B904 adds exception chaining, which changes __cause__ (behavioral).
-"src/aws_chain_secrets/secrets_manager.py" = ["B904"]
-
 [tool.mypy]
 files = ["src"]
 python_version = "3.10"
