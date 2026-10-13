@@ -24,8 +24,17 @@ dependencies = ["boto3"]
 [project.urls]
 Homepage = "https://github.com/h5kure/aws_chain_secrets"
 
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["aws_chain_secrets"]
 
 [tool.hatch.build.targets.sdist]
 include = ["/aws_chain_secrets", "/tests", "/README.rst", "/LICENSE"]
+
+[tool.pytest]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-config", "--strict-markers", "--import-mode=importlib"]
