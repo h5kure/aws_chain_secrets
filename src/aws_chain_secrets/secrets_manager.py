@@ -92,7 +92,7 @@ class SecretsManager(Client):
         :param secret_name: secret name of AWS Secrets Manager. If `None` is given, updates the entire secrets.
         """
         if secret_name is None:
-            for name in self._secrets.keys():
+            for name in self._secrets:
                 self.update(name)
         else:
             # BaseClient has no typed service methods. TODO(stage 4): B3 - _client is None when not connected.
