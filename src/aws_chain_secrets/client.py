@@ -20,10 +20,10 @@ class Client:
         self.aws_secret_access_key = aws_secret_access_key
         self._client: BaseClient | None = None
 
-    def connect(self):
+    def connect(self) -> None:
         self._client = self._create_client()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         if self._client is None:
             return
         self._client.close()
@@ -38,7 +38,7 @@ class Client:
             aws_secret_access_key=self.aws_secret_access_key,
         )
 
-    def __enter__(self):
+    def __enter__(self) -> "Client":
         self.connect()
         return self
 
