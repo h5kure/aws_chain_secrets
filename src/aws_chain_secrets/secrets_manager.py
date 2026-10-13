@@ -35,14 +35,6 @@ class SecretsManager(Client):
         self._secrets = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def __call__(self, key, *, default: Any = null, casting_type: Type = str):
-        return self.get(key, default=default, casting_type=casting_type)
-
-    def __enter__(self):
-        super().__enter__()
-        self.fetch()
-        return self
-
     def get(self, key, *, default: Any = null, casting_type: Type = str):
         """
         get secret value
@@ -120,3 +112,11 @@ class SecretsManager(Client):
             if "SecretString" in response:
                 return json.loads(response["SecretString"])
             return json.loads(base64.b64decode(response["SecretBinary"]))
+
+    def __call__(self, key, *, default: Any = null, casting_type: Type = str):
+        return self.get(key, default=default, casting_type=casting_type)
+
+    def __enter__(self):
+        super().__enter__()
+        self.fetch()
+        return self
