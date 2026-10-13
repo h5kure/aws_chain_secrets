@@ -69,8 +69,7 @@ class SecretsManager(Client):
         """
         if secret_name is None:
             secret_name = self._find_secret_name_for(key)
-        # TODO(stage 4): B7 - secret_name is still None when there are no secrets.
-        self._secrets[secret_name][key] = value  # type: ignore[index]
+        self._secrets[secret_name][key] = value
 
     def keys(self) -> KeysView[str]:
         return self._combined.keys()
@@ -103,15 +102,14 @@ class SecretsManager(Client):
                 SecretId=secret_name, SecretString=json.dumps(self._secrets[secret_name])
             )
 
-    def _find_secret_name_for(self, key: str) -> str | None:
+    def _find_secret_name_for(self, key: str) -> str:
         """
         find the secret that `set(None, key, value)` writes to
         :param key: key of map
         :return: the highest priority secret containing key, otherwise the highest priority secret.
-         `None` if there are no secrets.
         """
         names = list(reversed(self._secrets))
-        return next((name for name in names if key in self._secrets[name]), names[0] if names else None)
+        return next((name for name in names if key in self._secrets[name]), names[0])
 
     def _get_secrets(self, secret_name: str) -> dict[str, Any]:
         """
