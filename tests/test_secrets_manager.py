@@ -186,6 +186,16 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self.assertEqual(["kept"], list(secrets.keys()))
 
+    def test_fetch_before_connect_raises_runtime_error(self):
+        secrets = SecretsManager(self.REGION_NAME, "app")
+
+        with self.assertRaises(RuntimeError) as context:
+            secrets.fetch()
+        self.assertEqual(
+            "SecretsManager is not connected; call connect() or use it as a context manager.",
+            str(context.exception),
+        )
+
     def test_client_error_is_converted_to_mapped_exception(self):
         self._stub_client_error("app", "ResourceNotFoundException")
 
@@ -231,15 +241,17 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self._assert_update_sends(secrets, {"base": {"a": "1"}, "override": {"b": "2"}})
 
-    # KNOWN BUG(B3): to be fixed in stage 4. After exit _client is None, so update() fails with an
-    # unhelpful AttributeError. The desired behavior (clear error or reconnect) is not decided yet.
-    def test_update_after_exit_currently_raises_attribute_error(self):
+    def test_update_after_exit_raises_runtime_error(self):
         self._stub_secret_string("app", {"a": "1"})
         with SecretsManager(self.REGION_NAME, "app") as secrets:
             pass
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeError) as context:
             secrets.update("app")
+        self.assertEqual(
+            "SecretsManager is not connected; call connect() or use it as a context manager.",
+            str(context.exception),
+        )
 
     def test_set_with_secret_name_writes_to_that_secret(self):
         secrets = self._enter({"base": {"key": "base"}, "override": {"key": "override"}})

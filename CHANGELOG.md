@@ -16,3 +16,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Exceptions converted from an AWS `ClientError` carry the AWS error message.
 - `Client.disconnect()` can be called more than once, and before `connect()`.
 - The wheel no longer installs a top-level `tests` package.
+- `fetch()` and `update()` raise `RuntimeError` without a connection,
+  instead of an `AttributeError` about `NoneType`.

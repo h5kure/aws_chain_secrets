@@ -51,6 +51,9 @@ connect and fetch manually
     secrets(key="A", default=None, casting_type=int)
     secrets.disconnect()
 
+`fetch()` and `update()` need a connection and raise `RuntimeError` without one.
+`get()` and `set()` only work on local values, so they work without a connection.
+
 
 .. note::
 

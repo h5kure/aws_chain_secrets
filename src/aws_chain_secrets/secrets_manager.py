@@ -95,8 +95,8 @@ class SecretsManager(Client):
             for name in self._secrets:
                 self.update(name)
         else:
-            # BaseClient has no typed service methods. TODO(stage 4): B3 - _client is None when not connected.
-            self._client.update_secret(  # type: ignore[union-attr]
+            # BaseClient has no typed service methods.
+            self._connected_client().update_secret(  # type: ignore[attr-defined]
                 SecretId=secret_name, SecretString=json.dumps(self._secrets[secret_name])
             )
 
@@ -115,9 +115,10 @@ class SecretsManager(Client):
         get secrets from AWS
         :param secret_name: secret name of AWS Secrets Manager
         """
+        client = self._connected_client()
         try:
-            # BaseClient has no typed service methods. TODO(stage 4): B3 - _client is None when not connected.
-            response = self._client.get_secret_value(SecretId=secret_name)  # type: ignore[union-attr]
+            # BaseClient has no typed service methods.
+            response = client.get_secret_value(SecretId=secret_name)  # type: ignore[attr-defined]
         except ClientError as e:
             error = e.response["Error"]
             raise SecretsManagerException.from_code(error["Code"], error.get("Message"))

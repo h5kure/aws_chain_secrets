@@ -29,6 +29,13 @@ class Client:
         self._client.close()
         self._client = None
 
+    def _connected_client(self) -> BaseClient:
+        if self._client is None:
+            raise RuntimeError(
+                f"{type(self).__name__} is not connected; call connect() or use it as a context manager."
+            )
+        return self._client
+
     def _create_client(self) -> BaseClient:
         # Client serves any service, so service_name is a plain str; the stubs only accept literal names.
         return boto3.session.Session().client(  # type: ignore[call-overload]
