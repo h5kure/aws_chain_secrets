@@ -32,7 +32,10 @@ class SecretsManager(Client):
         initial setup
         :param region_name: AWS region name
         :param secret_names: The secret names that come later has higher precedence..
+        :raises ValueError: if no secret name is given
         """
+        if not secret_names:
+            raise ValueError("At least one secret name is required.")
         self.secret_names = secret_names
         super().__init__("secretsmanager", region_name, aws_access_key_id, aws_secret_access_key)
         self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
