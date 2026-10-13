@@ -53,7 +53,7 @@ class SecretsManager(Client):
             value = self._combined[key]
         except KeyError:
             if isinstance(default, Null):
-                raise KeyError(f"{key!r} not found. Please check secret value in AWS Secrets Manager.")
+                raise KeyError(f"{key!r} not found. Please check secret value in AWS Secrets Manager.") from None
             return default
         return cast(value, casting_type)
 
@@ -122,7 +122,7 @@ class SecretsManager(Client):
             response = client.get_secret_value(SecretId=secret_name)  # type: ignore[attr-defined]
         except ClientError as e:
             error = e.response["Error"]
-            raise SecretsManagerException.from_code(error["Code"], error.get("Message"))
+            raise SecretsManagerException.from_code(error["Code"], error.get("Message")) from e
         else:
             if "SecretString" in response:
                 return json.loads(response["SecretString"])

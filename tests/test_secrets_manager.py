@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 
 import boto3
+from botocore.exceptions import ClientError
 from botocore.stub import Stubber
 
 from aws_chain_secrets import SecretsManager
@@ -110,6 +111,14 @@ class SecretsManagerTestCase(unittest.TestCase):
             context.exception.args[0],
         )
 
+    def test_get_key_error_suppresses_internal_lookup_error(self):
+        secrets = self._enter({"app": {}})
+
+        with self.assertRaises(KeyError) as context:
+            secrets.get("missing")
+        self.assertIsNone(context.exception.__cause__)
+        self.assertTrue(context.exception.__suppress_context__)
+
     def test_get_returns_default_when_key_missing(self):
         secrets = self._enter({"app": {}})
 
@@ -203,6 +212,14 @@ class SecretsManagerTestCase(unittest.TestCase):
             with SecretsManager(self.REGION_NAME, "app"):
                 pass
         self.assertIs(ResourceNotFoundException, type(context.exception))
+
+    def test_client_error_is_chained_as_cause(self):
+        self._stub_client_error("app", "ResourceNotFoundException")
+
+        with self.assertRaises(ResourceNotFoundException) as context:
+            with SecretsManager(self.REGION_NAME, "app"):
+                pass
+        self.assertIsInstance(context.exception.__cause__, ClientError)
 
     def test_unknown_client_error_code_becomes_base_exception(self):
         self._stub_client_error("app", "AccessDeniedException")
