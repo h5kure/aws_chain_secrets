@@ -18,12 +18,14 @@ class Client:
         self.aws_secret_access_key = aws_secret_access_key
         self._client: Optional[BaseClient] = None
 
-    def __enter__(self):
-        self.connect()
-        return self
+    def connect(self):
+        self._client = self._create_client()
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.disconnect()
+    def disconnect(self):
+        if self._client is None:
+            return
+        self._client.close()
+        self._client = None
 
     def _create_client(self) -> BaseClient:
         return boto3.session.Session().client(
@@ -33,11 +35,9 @@ class Client:
             aws_secret_access_key=self.aws_secret_access_key,
         )
 
-    def connect(self):
-        self._client = self._create_client()
+    def __enter__(self):
+        self.connect()
+        return self
 
-    def disconnect(self):
-        if self._client is None:
-            return
-        self._client.close()
-        self._client = None
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.disconnect()
