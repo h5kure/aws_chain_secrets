@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "aws_chain_secrets"
 version = "1.0.3"
 description = "This aims to enable the use of one or more secrets from AWS SecretsManager."
-readme = "README.rst"
+readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Hyouk Oh", email = "h.5.kure@gmail.com" }]
@@ -36,7 +36,7 @@ dev = [
 packages = ["src/aws_chain_secrets"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src", "/tests", "/README.rst", "/LICENSE"]
+include = ["/src", "/tests", "/README.md", "/LICENSE"]
 
 [tool.pytest]
 testpaths = ["tests"]
