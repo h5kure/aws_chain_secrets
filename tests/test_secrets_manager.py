@@ -275,3 +275,12 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self.assertEqual("changed", secrets.get("key"))
         self._assert_update_sends(secrets, {"base": {"key": "base"}, "override": {"key": "changed"}})
+
+    # KNOWN BUG(B7): to be fixed in stage 4. With no secrets there is no highest-priority secret,
+    # so set(None, ...) looks up None and fails with an unhelpful KeyError(None).
+    def test_set_none_with_no_secrets_currently_raises_key_error_none(self):
+        secrets = self._enter({})
+
+        with self.assertRaises(KeyError) as context:
+            secrets.set(None, "key", "value")
+        self.assertEqual((None,), context.exception.args)
