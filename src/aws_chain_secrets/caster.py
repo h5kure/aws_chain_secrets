@@ -2,7 +2,7 @@ import json
 import string
 from dataclasses import dataclass
 from types import GenericAlias
-from typing import Any, Type, get_origin, get_args
+from typing import Any, Type, get_args, get_origin
 
 TRUE_STRINGS = ('y', 'yes', 't', 'true', 'on', '1')
 FALSE_STRINGS = ('', 'n', 'no', 'f', 'false', 'off', '0')

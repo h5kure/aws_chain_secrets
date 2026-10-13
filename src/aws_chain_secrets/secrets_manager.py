@@ -1,7 +1,7 @@
 import base64
 import json
 from collections import ChainMap
-from typing import Any, Type, Optional
+from typing import Any, Optional, Type
 
 from botocore.exceptions import ClientError
 
