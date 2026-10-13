@@ -6,18 +6,7 @@ class SecretsManagerException(Exception):
 
     @classmethod
     def from_code(cls, code: str, message: str | None = None) -> "SecretsManagerException":
-        if code == "DecryptionFailureException":
-            return DecryptionFailureException(message)
-        elif code == "InternalServiceErrorException":
-            return InternalServiceErrorException(message)
-        elif code == "InvalidParameterException":
-            return InvalidParameterException(message)
-        elif code == "InvalidRequestException":
-            return InvalidRequestException(message)
-        elif code == "ResourceNotFoundException":
-            return ResourceNotFoundException(message)
-        else:
-            return cls(message)
+        return _EXCEPTION_BY_CODE.get(code, cls)(message)
 
 
 class DecryptionFailureException(SecretsManagerException):
@@ -38,3 +27,13 @@ class InvalidRequestException(SecretsManagerException):
 
 class ResourceNotFoundException(SecretsManagerException):
     DEFAULT_MESSAGE = "We can't find the resource that you asked for."
+
+
+# AWS error codes with a dedicated exception; any other code becomes the class from_code is called on.
+_EXCEPTION_BY_CODE = {
+    "DecryptionFailureException": DecryptionFailureException,
+    "InternalServiceErrorException": InternalServiceErrorException,
+    "InvalidParameterException": InvalidParameterException,
+    "InvalidRequestException": InvalidRequestException,
+    "ResourceNotFoundException": ResourceNotFoundException,
+}
