@@ -39,6 +39,17 @@ class SecretsManagerExceptionTestCase(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertEqual("aws message", str(SecretsManagerException.from_code(code, "aws message")))
 
+    def test_from_code_on_subclass_returns_that_subclass_for_unknown_code(self):
+        for exception_class in self.KNOWN_CODE_TO_EXCEPTION.values():
+            with self.subTest(exception_class=exception_class.__name__):
+                self.assertIs(exception_class, type(exception_class.from_code(self.UNKNOWN_CODE)))
+
+    def test_from_code_on_subclass_maps_known_code_regardless_of_caller(self):
+        for caller in self.KNOWN_CODE_TO_EXCEPTION.values():
+            for code, exception_class in self.KNOWN_CODE_TO_EXCEPTION.items():
+                with self.subTest(caller=caller.__name__, code=code):
+                    self.assertIs(exception_class, type(caller.from_code(code)))
+
     def test_subclasses_are_secrets_manager_exceptions(self):
         for exception_class in self.KNOWN_CODE_TO_EXCEPTION.values():
             with self.subTest(exception_class=exception_class.__name__):
