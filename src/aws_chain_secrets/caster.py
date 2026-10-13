@@ -2,7 +2,7 @@ import json
 import string
 from dataclasses import dataclass
 from types import GenericAlias
-from typing import Any, Type, get_args, get_origin
+from typing import Any, get_args, get_origin
 
 TRUE_STRINGS = ("y", "yes", "t", "true", "on", "1")
 FALSE_STRINGS = ("", "n", "no", "f", "false", "off", "0")
@@ -29,7 +29,7 @@ def cast_boolean(value: Any) -> bool:
     return string_to_boolean(value)
 
 
-def cast(value: str, casting_type: Type = None) -> Any:
+def cast(value: str, casting_type: type[Any] = None) -> Any:
     """
     string value to typed value
     :param value: original string
@@ -59,10 +59,10 @@ class Sequence:
     Helper to cast Sequence (list, tuple, bytes, bytearray) and Set(set, frozenset)
     """
 
-    cast_type: Type = str
+    cast_type: type[Any] = str
     delimiter: str = ","
     strip: str = string.whitespace
-    wrapper: Type = list
+    wrapper: type[Any] = list
 
     def __call__(self, value: str):
         return self.wrapper(cast(v.strip(self.strip), self.cast_type) for v in value.split(self.delimiter))

@@ -1,7 +1,7 @@
 import base64
 import json
 from collections import ChainMap
-from typing import Any, Type
+from typing import Any
 
 from botocore.exceptions import ClientError
 
@@ -35,7 +35,7 @@ class SecretsManager(Client):
         self._secrets = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def get(self, key, *, default: Any = null, casting_type: Type = str):
+    def get(self, key, *, default: Any = null, casting_type: type[Any] = str):
         """
         get secret value
         :param key: key value to search
@@ -113,7 +113,7 @@ class SecretsManager(Client):
                 return json.loads(response["SecretString"])
             return json.loads(base64.b64decode(response["SecretBinary"]))
 
-    def __call__(self, key, *, default: Any = null, casting_type: Type = str):
+    def __call__(self, key, *, default: Any = null, casting_type: type[Any] = str):
         return self.get(key, default=default, casting_type=casting_type)
 
     def __enter__(self):
