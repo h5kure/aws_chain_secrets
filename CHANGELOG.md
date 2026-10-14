@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - `casting_type` accepts a function that takes the value, such as `json.loads`, `str.encode` or `base64.b64decode`.
   It is called with the stored value as is. Type annotations now allow it.
+- `SecretsManagerException` and its subclasses can be imported from `aws_chain_secrets`,
+  which now defines `__all__`.
 
 ### Changed
 - Python 3.10 or later is required.

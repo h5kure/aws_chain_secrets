@@ -207,7 +207,7 @@ secrets.update()  # every secret, in the order given
 | `ValueError` | `SecretsManager` is created without a secret name |
 | `RuntimeError` | `fetch()` or `update()` is called without a connection |
 | `KeyError` | `get()` misses a key without `default`, or `set()` gets an unknown secret name |
-| `aws_chain_secrets.exceptions.SecretsManagerException` | `fetch()` fails in AWS |
+| `aws_chain_secrets.SecretsManagerException` | `fetch()` fails in AWS |
 
 `fetch()` converts AWS errors to `SecretsManagerException` or one of its subclasses,
 keeping the original `botocore.exceptions.ClientError` as `__cause__`:
@@ -215,6 +215,17 @@ keeping the original `botocore.exceptions.ClientError` as `__cause__`:
 `InvalidRequestException` and `ResourceNotFoundException`.
 Other codes, such as `AccessDeniedException`, become `SecretsManagerException` itself.
 `update()` raises the `ClientError` unchanged.
+
+The exceptions can be imported from `aws_chain_secrets`:
+
+```python
+from aws_chain_secrets import ResourceNotFoundException
+
+try:
+    secrets.fetch()
+except ResourceNotFoundException:
+    ...
+```
 
 ## AWS credentials and permissions
 
