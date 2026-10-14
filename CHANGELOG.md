@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   or with AWS CLI v1 `--secret-binary "<base64>"`. Reading them now fails with `ValueError`.
   **Migration:** store the JSON bytes themselves as `SecretBinary`, or store the JSON as `SecretString`.
 - `casting_type` converts a value that is not a JSON string with `casting_type(value)`, as Python does.
-  Strings are parsed as before. `bool` follows Python truthiness for such values:
+  Strings are cast as before, except with `dict` (see below). `bool` follows Python truthiness for such values:
   `5432` gives `True` and `null` gives `False`, where both raised `ValueError` before.
   **Affected:** code that relied on that `ValueError` from `casting_type=bool` for a non-string value.
   **Migration:** check the value yourself before casting, or store the flag as a string such as `"true"`.
@@ -37,12 +37,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Affected:** code that reads a non-string value without `casting_type` and expects a string,
   for example the numeric `port` of a secret managed by Amazon RDS.
   **Migration:** pass `casting_type=str`, or use the value with its JSON type.
-- `casting_type=list`, `set`, `frozenset`, `tuple`, generic sequences such as `list[int]`, and `dict`
-  return an empty container for an empty or whitespace-only string, as for a JSON `[]` or `{}`.
-  The AWS console stores a cleared value as `""`. Previously sequences gave one empty item such as `['']`,
-  generic sequences raised `ValueError` and `dict` raised `json.JSONDecodeError`.
-  **Affected:** code that expects `['']` for a cleared value, or catches those errors to detect it.
+- `casting_type=list`, `set`, `frozenset`, `tuple` and generic sequences such as `list[int]`
+  return an empty container for an empty or whitespace-only string, as for a JSON `[]`.
+  The AWS console stores a cleared value as `""`. Previously sequences gave one empty item such as `['']`
+  and generic sequences raised `ValueError`.
+  **Affected:** code that expects `['']` for a cleared value, or catches that error to detect it.
   **Migration:** treat an empty container as unset, or read the value with `casting_type=None` and check for `""`.
+- `casting_type=dict` no longer parses a string as JSON. It passes the string to `dict()` as Python does,
+  which raises `ValueError`. Previously a JSON string was parsed, so `'[1, 2]'` gave a list instead of a dict.
+  **Affected:** code that reads a JSON object stored as a string with `casting_type=dict`.
+  **Migration:** pass `casting_type=json.loads`.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.

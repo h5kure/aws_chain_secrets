@@ -119,14 +119,12 @@ A string value is parsed:
 | `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
 | `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | any of the above sequences | `""`, `"  "` | `[]` (empty) |
-| `dict` | `"{\"a\": 1}"` | `{'a': 1}` |
-| | `""`, `"  "` | `{}` |
 | `bytes`, `bytearray` | `"hi"` | `b'hi'` |
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
   Empty items are kept: `"a,,b"` gives `['a', '', 'b']` and `"a,b,"` gives `['a', 'b', '']`.
-- An empty or whitespace-only string gives an empty sequence or `dict`, the same as a JSON `[]` or `{}`.
+- An empty or whitespace-only string gives an empty sequence, the same as a JSON `[]`.
   The AWS console stores a cleared value as `""`. Other types get the string as is:
   `int` and `float` raise `ValueError`, and a function or a type such as `pathlib.Path` receives `""`.
 - `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded; pass a function for it.
@@ -150,11 +148,15 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 A function is called with the stored value as is.
-Use one for formats the library does not guess, such as base64 or hex text:
+Use one for formats the library does not guess, such as JSON, base64 or hex text.
+A comma-separated string reads with `list`; JSON text such as `"[1, 2]"` or `"{\"a\": 1}"` reads with `json.loads`.
+`dict` does not parse JSON: like Python's `dict()`, it raises `ValueError` for such a string.
 
 ```python
 import base64
+import json
 
+secrets("FEATURES", casting_type=json.loads)  # '{"beta": true}' -> {'beta': True}
 secrets("TLS_KEY", casting_type=base64.b64decode)  # "aGk=" -> b'hi'
 secrets("API_SALT", casting_type=bytes.fromhex)  # "6869" -> b'hi'
 ```

@@ -1,4 +1,3 @@
-import json
 import string
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -56,8 +55,6 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
         return Sequence(wrapper=casting_type)(value)
     if casting_type in (bytes, bytearray):
         return casting_type(value.encode())
-    if casting_type is dict:
-        return json.loads(value) if value.strip() else {}
     return casting_type(value)
 
 

@@ -1,4 +1,5 @@
 import base64
+import json
 import unittest
 
 from aws_chain_secrets import caster
@@ -18,8 +19,10 @@ class CasterTestCase(unittest.TestCase):
     def test_set(self):
         self.assertEqual({1, 2, 3, 4}, caster.cast("1,2,3,4", set[int]))
 
-    def test_dict(self):
-        self.assertEqual({"foo": "bar"}, caster.cast('{"foo": "bar"}', dict))
+    def test_cast_string_to_dict_raises_value_error(self):
+        for value in ('{"foo": "bar"}', "[1, 2]", "  "):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                caster.cast(value, dict)
 
     def test_cast_json_array_to_list_converts_it(self):
         for casting_type in (list, set, frozenset, tuple):
@@ -71,6 +74,7 @@ class CasterTestCase(unittest.TestCase):
     def test_cast_with_function_applies_it(self):
         self.assertEqual(b"hi", caster.cast("aGk=", base64.b64decode))
         self.assertEqual(b"hi", caster.cast("6869", bytes.fromhex))
+        self.assertEqual({"a": 1}, caster.cast('{"a": 1}', json.loads))
 
     def test_cast_blank_string_to_sequence_returns_empty_container(self):
         for casting_type, expected in (
@@ -89,11 +93,6 @@ class CasterTestCase(unittest.TestCase):
 
                     self.assertEqual(expected, result)
                     self.assertIs(type(expected), type(result))
-
-    def test_cast_blank_string_to_dict_returns_empty_dict(self):
-        for value in ("", "  ", "\t\n"):
-            with self.subTest(value=value):
-                self.assertEqual({}, caster.cast(value, dict))
 
     def test_cast_empty_string_to_number_raises_value_error(self):
         for casting_type in (int, float):
