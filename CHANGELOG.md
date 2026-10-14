@@ -56,6 +56,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Affected:** code that uses `tuple[int]` or `tuple[int, str]` for a list of any length.
   **Migration:** use `tuple[int, ...]` for any number of items of one type.
 
+### Removed
+- `aws_chain_secrets.caster.cast_boolean()`. It converted any value with `str()` before reading it as a truth value.
+  **Migration:** use `casting_type=bool` for a string value.
+
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.
 - Exceptions converted from an AWS `ClientError` carry the AWS error message.

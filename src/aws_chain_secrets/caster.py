@@ -28,11 +28,6 @@ def string_to_boolean(value: str) -> bool:
     raise ValueError(f"invalid truth value {value!r}")
 
 
-def cast_boolean(value: Any) -> bool:
-    value = str(value)
-    return string_to_boolean(value)
-
-
 def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = None) -> Any:
     """
     Convert a secret value with `casting_type(value)`, as Python does.
@@ -59,7 +54,7 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
         raise NotImplementedError(f"cannot cast to {casting_type!r}")
     if isinstance(value, str):
         if casting_type is bool:
-            return cast_boolean(value)
+            return string_to_boolean(value)
         if casting_type in _SEQUENCE_TYPES:
             return Sequence(wrapper=casting_type)(value)
     return casting_type(value)
