@@ -120,7 +120,8 @@ A string value is parsed:
 | `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | any of the above sequences | `""`, `"  "` | `[]` (empty) |
 
-- `bool` is case-insensitive and raises `ValueError` for any other string.
+- `bool` ignores case and surrounding whitespace, so `" True "` gives `True` and `"  "` gives `False`.
+  It raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
   Empty items are kept: `"a,,b"` gives `['a', '', 'b']` and `"a,b,"` gives `['a', 'b', '']`.
 - An empty or whitespace-only string gives an empty sequence, the same as a JSON `[]`.

@@ -47,6 +47,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   which raises `ValueError`. Previously a JSON string was parsed, so `'[1, 2]'` gave a list instead of a dict.
   **Affected:** code that reads a JSON object stored as a string with `casting_type=dict`.
   **Migration:** pass `casting_type=json.loads`.
+- `casting_type=bool` ignores surrounding whitespace in a string, so `" true "` gives `True`
+  and a whitespace-only string gives `False` like `""`. Previously both raised `ValueError`.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.

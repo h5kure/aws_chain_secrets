@@ -12,6 +12,11 @@ class CasterTestCase(unittest.TestCase):
     def test_bool(self):
         self.assertTrue(caster.cast("true", bool))
 
+    def test_cast_string_to_bool_ignores_surrounding_whitespace(self):
+        for value, expected in (("  ", False), ("\t\n", False), (" true ", True), (" OFF\n", False)):
+            with self.subTest(value=value):
+                self.assertIs(expected, caster.cast(value, bool))
+
     def test_list(self):
         self.assertEqual(["1", "2", "3", "4"], caster.cast("1,2,3,4", list))
         self.assertEqual([1, 2, 3, 4], caster.cast("1, 2, 3, 4", list[int]))

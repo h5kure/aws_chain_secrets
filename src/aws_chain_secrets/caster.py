@@ -12,12 +12,13 @@ _SEQUENCE_TYPES = (set, frozenset, list, tuple)
 def string_to_boolean(value: str) -> bool:
     """
     Convert a string representation of truth to True or False.
+    Case and surrounding whitespace are ignored.
 
     :param value: a string representation of truth
     :return: True if value represents truth, False if value represents false, otherwise raise ValueError
     :raises: Raises ValueError if 'value' is anything else
     """
-    value = value.lower()
+    value = value.strip().lower()
     if value in TRUE_STRINGS:
         return True
     if value in FALSE_STRINGS:
