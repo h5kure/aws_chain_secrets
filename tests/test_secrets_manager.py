@@ -138,7 +138,8 @@ class SecretsManagerTestCase(unittest.TestCase):
 
         self.assertEqual(5432, secrets.get("port", casting_type=int))
 
-    def test_get_casts_non_string_json_value_to_str_by_default(self):
+    # KNOWN BUG(B8): the default casting_type=str turns non-string JSON values into strings.
+    def test_get_currently_casts_non_string_json_value_to_str_by_default(self):
         secrets = self._enter({"app": {"port": 5432}})
 
         self.assertEqual("5432", secrets.get("port"))
