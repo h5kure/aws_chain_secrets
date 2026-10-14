@@ -52,6 +52,8 @@ select = ["E", "F", "I", "UP", "B"]
 files = ["src"]
 python_version = "3.10"
 strict = true
+# Not part of strict; an unreachable branch means an annotation does not match what the code handles.
+warn_unreachable = true
 # Annotations are written where they inform readers and users (py.typed public API), not everywhere:
 # an unannotated function is still checked (check_untyped_defs), and `-> Any` would add nothing.
 disallow_untyped_defs = false
