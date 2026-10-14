@@ -135,10 +135,12 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 | `list`, `set`, `frozenset`, `tuple` | `[1, "a"]` | `[1, 'a']` |
 | `dict` | `{"a": 1}` | `{'a': 1}` (a copy) |
 | `bytes` | `[104, 105]` | `b'hi'` |
+| | `5` | `b'\x00\x00\x00\x00\x00'` (five zero bytes) |
 | `str` | `false` | `'False'` |
 
 - Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.
 - `str` uses Python's `str()`, not JSON spelling. For JSON text, use `json.dumps(secrets(key))`.
+- `bytes` and `bytearray` treat a number as a length, so store bytes as a string or a list of integers.
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 A function is called with the stored value as is.
