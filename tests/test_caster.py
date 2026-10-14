@@ -1,4 +1,5 @@
 import base64
+import json
 import unittest
 
 from aws_chain_secrets import caster
@@ -71,3 +72,32 @@ class CasterTestCase(unittest.TestCase):
     def test_cast_with_function_applies_it(self):
         self.assertEqual(b"hi", caster.cast("aGk=", base64.b64decode))
         self.assertEqual(b"hi", caster.cast("6869", bytes.fromhex))
+
+    def test_cast_blank_string_to_sequence_currently_returns_one_empty_item(self):
+        # KNOWN BUG(B11): a blank string should give an empty container, as a JSON [] does
+        for casting_type in (list, set, frozenset, tuple):
+            for value in ("", "  "):
+                with self.subTest(casting_type=casting_type, value=value):
+                    self.assertEqual(casting_type([""]), caster.cast(value, casting_type))
+
+    def test_cast_blank_string_to_generic_sequence_currently_raises_value_error(self):
+        # KNOWN BUG(B11): a blank string should give an empty container, as a JSON [] does
+        for casting_type in (list[int], set[int], frozenset[int], tuple[int]):
+            for value in ("", "  "):
+                with self.subTest(casting_type=casting_type, value=value), self.assertRaises(ValueError):
+                    caster.cast(value, casting_type)
+
+    def test_cast_blank_string_to_dict_currently_raises_json_decode_error(self):
+        # KNOWN BUG(B11): a blank string should give an empty dict, as a JSON {} does
+        for value in ("", "  "):
+            with self.subTest(value=value), self.assertRaises(json.JSONDecodeError):
+                caster.cast(value, dict)
+
+    def test_cast_empty_string_to_number_raises_value_error(self):
+        for casting_type in (int, float):
+            with self.subTest(casting_type=casting_type), self.assertRaises(ValueError):
+                caster.cast("", casting_type)
+
+    def test_cast_string_with_empty_items_keeps_them(self):
+        self.assertEqual(["a", "", "b"], caster.cast("a,,b", list))
+        self.assertEqual(["a", "b", ""], caster.cast("a,b,", list))
