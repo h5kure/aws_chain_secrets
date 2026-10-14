@@ -40,12 +40,12 @@ class SecretsManager(Client):
         self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def get(self, key: str, *, default: Any = null, casting_type: type[Any] = str):
+    def get(self, key: str, *, default: Any = null, casting_type: type[Any] | None = None):
         """
         get secret value
         :param key: key value to search
         :param default: default value if key not exists in secrets
-        :param casting_type: casting type to convert value
+        :param casting_type: casting type to convert value. `None` returns the stored value as is (not a copy).
         :return: Any secret value specified by key
         """
         try:

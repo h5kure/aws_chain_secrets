@@ -45,16 +45,19 @@ python -m pip install aws_chain_secrets
 
 Each secret must hold a JSON object, stored either as `SecretString` or as `SecretBinary` (the raw JSON bytes).
 
-Values are returned as `str` by default, so other JSON types come back in Python spelling
-(see [Type casting](#type-casting) to convert them):
+Values can be any JSON type. They are returned as stored, with the matching Python type:
 
-| Stored value | `secrets(key)` returns | Note |
-|---|---|---|
-| `"5432"` | `'5432'` | |
-| `5432` | `'5432'` | `casting_type=int` gives `5432` |
-| `false` | `'False'` | Python spelling; `casting_type=bool` gives `False` |
-| `[1, 2]` | `'[1, 2]'` | `casting_type=list` gives `[1, 2]` |
-| `{"a": 1}` | `"{'a': 1}"` | Python spelling; `casting_type=dict` gives `{'a': 1}` |
+| Stored value | `secrets(key)` returns |
+|---|---|
+| `"5432"` | `'5432'` |
+| `5432` | `5432` |
+| `false` | `False` |
+| `null` | `None` |
+| `[1, 2]` | `[1, 2]` |
+| `{"a": 1}` | `{'a': 1}` |
+
+The AWS console's key/value editor stores every value as a string.
+Use [Type casting](#type-casting) to convert such strings, for example `"5432"` to `5432`.
 
 ## Usage
 
@@ -98,10 +101,13 @@ secrets("TIMEOUT", default=30, casting_type=int)
 - A missing key without `default` raises `KeyError`.
 - `default` is returned as is; `casting_type` is not applied to it.
 - `keys()`, `values()` and `items()` return a merged view of all secrets.
+- Without `casting_type`, a list or dict is the stored object itself, not a copy,
+  so changing it changes the local secret that `update()` uploads.
+  Pass `casting_type=list` or `casting_type=dict` for a copy.
 
 ### Type casting
 
-Values are returned as `str` by default. Pass `casting_type` to convert them.
+Pass `casting_type` to convert a value.
 
 A string value is parsed:
 
@@ -129,7 +135,7 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 | `str` | `false` | `'False'` |
 
 - Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.
-- `str` uses Python's `str()`, not JSON spelling.
+- `str` uses Python's `str()`, not JSON spelling. For JSON text, use `json.dumps(secrets(key))`.
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 ### Changing values

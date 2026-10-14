@@ -26,6 +26,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `5432` gives `True` and `null` gives `False`, where both raised `ValueError` before.
   **Affected:** code that relied on that `ValueError` from `casting_type=bool` for a non-string value.
   **Migration:** check the value yourself before casting, or store the flag as a string such as `"true"`.
+- `get()` and `secrets(key)` return the stored value as is by default (`casting_type=None`).
+  Previously the default was `casting_type=str`, so a value that is not a JSON string came back in Python spelling,
+  for example `'5432'`, `'False'` or `"{'a': 1}"`. String values are unchanged.
+  A list or dict is now the stored object itself, as with `values()`.
+  **Affected:** code that reads a non-string value without `casting_type` and expects a string,
+  for example the numeric `port` of a secret managed by Amazon RDS.
+  **Migration:** pass `casting_type=str`, or use the value with its JSON type.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.
