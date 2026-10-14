@@ -109,3 +109,14 @@ class CasterTestCase(unittest.TestCase):
     def test_sequence_with_blank_string_returns_empty_container(self):
         self.assertEqual([], caster.Sequence(cast_type=int, delimiter=";")("  "))
         self.assertEqual([], caster.Sequence(strip=" -")("--"))
+
+    # KNOWN BUG(B13): only the first type argument is used, so str is ignored.
+    def test_cast_string_to_multi_type_tuple_currently_uses_first_type(self):
+        self.assertEqual((1, 2), caster.cast("1, 2", tuple[int, str]))
+
+    # KNOWN BUG(B13): tuple[int] means one item in typing, but every item is cast.
+    def test_cast_string_to_single_type_tuple_currently_casts_every_item(self):
+        self.assertEqual((1, 2), caster.cast("1, 2", tuple[int]))
+
+    def test_cast_string_to_variadic_tuple_casts_each_item(self):
+        self.assertEqual((1, 2), caster.cast("1, 2", tuple[int, ...]))
