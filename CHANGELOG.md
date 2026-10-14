@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-14
+
 Upgrading from 1.x: entries marked **Breaking** may need changes in your code.
 
 ### Added
@@ -86,4 +88,5 @@ Upgrading from 1.x: entries marked **Breaking** may need changes in your code.
 - `casting_type=frozenset` and `frozenset[int]` split a string value on `,` like `set`.
   Previously `frozenset` split it into characters and `frozenset[int]` raised `NotImplementedError`.
 
-[Unreleased]: https://github.com/h5kure/aws_chain_secrets/commits/main/
+[Unreleased]: https://github.com/h5kure/aws_chain_secrets/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/h5kure/aws_chain_secrets/releases/tag/v2.0.0

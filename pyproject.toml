@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aws_chain_secrets"
-version = "1.0.3"
+version = "2.0.0"
 description = "Read several AWS Secrets Manager secrets as one key-value store."
 readme = "README.md"
 license = "MIT"
