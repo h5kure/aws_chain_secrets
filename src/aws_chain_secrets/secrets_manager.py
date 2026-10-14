@@ -127,8 +127,7 @@ class SecretsManager(Client):
                 return json.loads(response["SecretString"])
             return json.loads(response["SecretBinary"])
 
-    def __call__(self, key: str, *, default: Any = null, casting_type: type[Any] = str):
-        return self.get(key, default=default, casting_type=casting_type)
+    __call__ = get
 
     def __enter__(self) -> "SecretsManager":
         super().__enter__()
