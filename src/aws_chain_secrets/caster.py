@@ -33,11 +33,14 @@ def cast_boolean(value: Any) -> bool:
 
 def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = None) -> Any:
     """
-    secret value to typed value
-    :param value: original value. A string is parsed; any other value is converted with `casting_type(value)`.
-     Generic sequences such as `list[int]` cast each item the same way.
-    :param casting_type: a type, or a function that takes the value such as `base64.b64decode`.
-     `None` returns the value as is.
+    Convert a secret value with `casting_type(value)`, as Python does.
+    A string is the exception for two types where Python gives a wrong value without an error:
+    `bool` reads TRUE_STRINGS and FALSE_STRINGS, since `bool("false")` is True,
+    and sequences split on `,`, since `list("a,b")` gives characters.
+    Pass a function such as `json.loads` for any other conversion.
+    :param value: stored value
+    :param casting_type: a type, or a function that takes the value. `None` returns the value as is.
+     Generic sequences such as `list[int]` cast each item by the same rules.
     :return: typed value
     """
     if casting_type is None:
@@ -48,12 +51,11 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
         if origin in _SEQUENCE_TYPES:
             return Sequence(cast_type=args[0] if args else str, wrapper=origin)(value)
         raise NotImplementedError(f"cannot cast to {casting_type!r}")
-    if not isinstance(value, str):
-        return casting_type(value)
-    if casting_type is bool:
-        return cast_boolean(value)
-    if casting_type in _SEQUENCE_TYPES:
-        return Sequence(wrapper=casting_type)(value)
+    if isinstance(value, str):
+        if casting_type is bool:
+            return cast_boolean(value)
+        if casting_type in _SEQUENCE_TYPES:
+            return Sequence(wrapper=casting_type)(value)
     return casting_type(value)
 
 
