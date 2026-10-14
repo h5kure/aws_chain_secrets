@@ -73,7 +73,16 @@ class Sequence:
     wrapper: type[Any] = list
 
     def __call__(self, value: str | Iterable[Any]):
-        if isinstance(value, str):
-            parts = value.split(self.delimiter) if value.strip(self.strip) else []
-            value = (v.strip(self.strip) for v in parts)
-        return self.wrapper(cast(item, self.cast_type) for item in value)
+        items = _split_items(value, self.delimiter, self.strip)
+        return self.wrapper(cast(item, self.cast_type) for item in items)
+
+
+def _split_items(value: str | Iterable[Any], delimiter: str, strip: str) -> Iterable[Any]:
+    """
+    Split a string on `delimiter` and strip each item; a blank string gives no items.
+    Any other iterable is returned as is.
+    """
+    if isinstance(value, str):
+        parts = value.split(delimiter) if value.strip(strip) else []
+        return (part.strip(strip) for part in parts)
+    return value
