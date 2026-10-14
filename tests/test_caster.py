@@ -61,11 +61,8 @@ class CasterTestCase(unittest.TestCase):
     def test_cast_string_to_bytes_does_not_decode_base64(self):
         self.assertEqual(b"aGk=", caster.cast("aGk=", bytes))
 
-    # KNOWN BUG(B10): frozenset is not in the sequence types, so frozenset("a,b") splits it into characters.
-    def test_cast_string_to_frozenset_currently_splits_into_characters(self):
-        self.assertEqual(frozenset({"a", ",", "b"}), caster.cast("a,b", frozenset))
+    def test_cast_string_to_frozenset_splits_it(self):
+        self.assertEqual(frozenset({"a", "b"}), caster.cast("a, b", frozenset))
 
-    # KNOWN BUG(B10): frozenset is not in the generic sequence types.
-    def test_cast_string_to_generic_frozenset_currently_raises_not_implemented_error(self):
-        with self.assertRaises(NotImplementedError):
-            caster.cast("1,2", frozenset[int])
+    def test_cast_string_to_generic_frozenset_casts_each_item(self):
+        self.assertEqual(frozenset({1, 2}), caster.cast("1,2", frozenset[int]))

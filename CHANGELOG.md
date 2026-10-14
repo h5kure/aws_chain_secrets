@@ -46,3 +46,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `casting_type=dict` returns a copy of a JSON object. Previously it failed with `TypeError`.
 - `casting_type=bytes` and `bytearray` encode a string value as UTF-8.
   Previously they always failed with `TypeError`.
+- `casting_type=frozenset` and `frozenset[int]` split a string value on `,` like `set`.
+  Previously `frozenset` split it into characters and `frozenset[int]` raised `NotImplementedError`.

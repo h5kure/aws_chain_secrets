@@ -116,8 +116,8 @@ A string value is parsed:
 | `int`, `float`, or any type that takes a string | `"5432"` | `5432` |
 | `bool` | `"true"`, `"yes"`, `"on"`, `"1"`, ... | `True` |
 | | `"false"`, `"no"`, `"off"`, `"0"`, `""`, ... | `False` |
-| `list`, `set`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
-| `list[int]`, `set[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
+| `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
+| `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | `dict` | `"{\"a\": 1}"` | `{'a': 1}` |
 | `bytes`, `bytearray` | `"hi"` | `b'hi'` |
 
@@ -132,7 +132,7 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 | `int` | `3.5` | `3` |
 | `bool` | `5432` | `True` |
 | | `0`, `null` | `False` |
-| `list`, `set`, `tuple` | `[1, "a"]` | `[1, 'a']` |
+| `list`, `set`, `frozenset`, `tuple` | `[1, "a"]` | `[1, 'a']` |
 | `dict` | `{"a": 1}` | `{'a': 1}` (a copy) |
 | `bytes` | `[104, 105]` | `b'hi'` |
 | `str` | `false` | `'False'` |

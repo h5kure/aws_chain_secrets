@@ -43,14 +43,14 @@ def cast(value: Any, casting_type: type[Any] | GenericAlias | None = None) -> An
     if isinstance(casting_type, GenericAlias):
         origin = get_origin(casting_type)
         args = get_args(casting_type)
-        if origin in (set, list, tuple):
+        if origin in (set, frozenset, list, tuple):
             return Sequence(cast_type=args[0] if args else str, wrapper=origin)(value)
         raise NotImplementedError(f"cannot cast to {casting_type!r}")
     if not isinstance(value, str):
         return casting_type(value)
     if casting_type is bool:
         return cast_boolean(value)
-    if casting_type in (set, list, tuple):
+    if casting_type in (set, frozenset, list, tuple):
         return Sequence(wrapper=casting_type)(value)
     if casting_type in (bytes, bytearray):
         return casting_type(value.encode())
