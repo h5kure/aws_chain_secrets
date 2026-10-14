@@ -28,9 +28,9 @@ Suppose these two secrets are stored in AWS Secrets Manager.
 from aws_chain_secrets import SecretsManager
 
 with SecretsManager("ap-northeast-2", "myapp/common", "myapp/prod") as secrets:
-    secrets("DB_HOST")                    # 'prod-db.internal'  (myapp/prod wins)
-    secrets("DB_PORT", casting_type=int)  # 5432                (only in myapp/common)
-    secrets("DEBUG", casting_type=bool)   # False
+    secrets("DB_HOST")  # 'prod-db.internal' (myapp/prod wins)
+    secrets("DB_PORT", casting_type=int)  # 5432 (only in myapp/common)
+    secrets("DEBUG", casting_type=bool)  # False
 ```
 
 ## Install
@@ -90,8 +90,8 @@ reading and changing local values with `get()` and `set()` do not.
 `secrets(key)` is a shorthand for `secrets.get(key)`. Both take keyword-only `default` and `casting_type`.
 
 ```python
-secrets.get("DB_HOST")                           # 'prod-db.internal'
-secrets("TIMEOUT", default=30)                   # 30 when TIMEOUT is missing
+secrets.get("DB_HOST")  # 'prod-db.internal'
+secrets("TIMEOUT", default=30)  # 30 when TIMEOUT is missing
 secrets("TIMEOUT", default=30, casting_type=int)
 ```
 
@@ -136,7 +136,7 @@ or to the highest-priority secret if none has it. An unknown secret name raises 
 
 ```python
 secrets.update("myapp/common")  # one secret
-secrets.update()                # every secret, in the order given
+secrets.update()  # every secret, in the order given
 ```
 
 > **Warning:** `update()` replaces the whole secret with the local values as JSON `SecretString`.
@@ -166,8 +166,10 @@ You can pass keys instead:
 
 ```python
 SecretsManager(
-    "ap-northeast-2", "myapp/common",
-    aws_access_key_id="...", aws_secret_access_key="...",
+    "ap-northeast-2",
+    "myapp/common",
+    aws_access_key_id="...",
+    aws_secret_access_key="...",
 )
 ```
 
