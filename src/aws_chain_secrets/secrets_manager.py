@@ -1,6 +1,7 @@
 import json
 from collections import ChainMap
 from collections.abc import ItemsView, KeysView, ValuesView
+from types import GenericAlias
 from typing import Any
 
 from botocore.exceptions import ClientError
@@ -40,7 +41,7 @@ class SecretsManager(Client):
         self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def get(self, key: str, *, default: Any = null, casting_type: type[Any] | None = None):
+    def get(self, key: str, *, default: Any = null, casting_type: type[Any] | GenericAlias | None = None):
         """
         get secret value
         :param key: key value to search

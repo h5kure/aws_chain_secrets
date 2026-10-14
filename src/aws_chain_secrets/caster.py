@@ -30,7 +30,7 @@ def cast_boolean(value: Any) -> bool:
     return string_to_boolean(value)
 
 
-def cast(value: Any, casting_type: type[Any] | None = None) -> Any:
+def cast(value: Any, casting_type: type[Any] | GenericAlias | None = None) -> Any:
     """
     secret value to typed value
     :param value: original value. A string is parsed; any other value is converted with `casting_type(value)`.
