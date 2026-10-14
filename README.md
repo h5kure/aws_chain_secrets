@@ -108,17 +108,26 @@ secrets("TIMEOUT", default=30, casting_type=int)
 ### Type casting
 
 Pass a type, or a function that takes the value, as `casting_type` to convert a value.
+The result is `casting_type(value)`, as in Python, with two exceptions for strings
+where Python would give a wrong value without an error:
 
-A string value is parsed:
+- `bool`: `bool("false")` is `True`, so a string is read as a truth value instead.
+- Sequences: `list("a,b")` gives `['a', ',', 'b']`, so a string is split on `,` instead.
+
+For any other conversion, such as reading JSON text, pass a function.
+
+A string value:
 
 | `casting_type` | Stored value | Result |
 |---|---|---|
-| `int`, `float`, or any type that takes a string | `"5432"` | `5432` |
 | `bool` | `"true"`, `"yes"`, `"on"`, `"1"`, ... | `True` |
 | | `"false"`, `"no"`, `"off"`, `"0"`, `""`, ... | `False` |
 | `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
 | `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | any of the above sequences | `""`, `"  "` | `[]` (empty) |
+| `int`, `float`, or any other type that takes a string | `"5432"` | `5432` |
+| `dict` | `"{\"a\": 1}"` | `ValueError`, as from `dict()` |
+| `bytes`, `bytearray` | `"hi"` | `TypeError`, as from `bytes()` |
 
 - `bool` ignores case and surrounding whitespace, so `" True "` gives `True` and `"  "` gives `False`.
   It raises `ValueError` for any other string.
@@ -128,7 +137,7 @@ A string value is parsed:
   The AWS console stores a cleared value as `""`. Other types get the string as is:
   `int` and `float` raise `ValueError`, and a function or a type such as `pathlib.Path` receives `""`.
 
-Any other JSON value is converted with `casting_type(value)`, as Python does:
+Any other JSON value:
 
 | `casting_type` | Stored value | Result |
 |---|---|---|
@@ -148,10 +157,7 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 A function is called with the stored value as is.
-Use one for formats the library does not guess, such as JSON, base64 or hex text.
-A comma-separated string reads with `list`; JSON text such as `"[1, 2]"` or `"{\"a\": 1}"` reads with `json.loads`.
-`dict` does not parse JSON: like Python's `dict()`, it raises `ValueError` for such a string.
-Likewise `bytes` raises `TypeError` for a string; pass `str.encode` to encode it as UTF-8.
+A comma-separated string reads with `list`, while JSON text such as `"[1, 2]"` or `"{\"a\": 1}"` reads with `json.loads`:
 
 ```python
 import base64
