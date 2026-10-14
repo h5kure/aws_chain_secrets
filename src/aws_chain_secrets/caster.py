@@ -7,6 +7,8 @@ from typing import Any, get_args, get_origin
 TRUE_STRINGS = ("y", "yes", "t", "true", "on", "1")
 FALSE_STRINGS = ("", "n", "no", "f", "false", "off", "0")
 _SEQUENCE_TYPES = (set, frozenset, list, tuple)
+_DELIMITER = ","
+_STRIP = string.whitespace
 
 
 def string_to_boolean(value: str) -> bool:
@@ -41,6 +43,8 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
     :param value: stored value
     :param casting_type: a type, or a function that takes the value. `None` returns the value as is.
      Generic sequences such as `list[int]` cast each item by the same rules.
+     A generic tuple casts by position as in typing: `tuple[str, int]` takes exactly two items,
+     `tuple[int, ...]` any number.
     :return: typed value
     """
     if casting_type is None:
@@ -48,6 +52,8 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
     if isinstance(casting_type, GenericAlias):
         origin = get_origin(casting_type)
         args = get_args(casting_type)
+        if origin is tuple and args[1:] != (Ellipsis,):
+            return _cast_by_position(value, args)
         if origin in _SEQUENCE_TYPES:
             return Sequence(cast_type=args[0] if args else str, wrapper=origin)(value)
         raise NotImplementedError(f"cannot cast to {casting_type!r}")
@@ -68,8 +74,8 @@ class Sequence:
     """
 
     cast_type: Callable[[Any], Any] | GenericAlias = str
-    delimiter: str = ","
-    strip: str = string.whitespace
+    delimiter: str = _DELIMITER
+    strip: str = _STRIP
     wrapper: type[Any] = list
 
     def __call__(self, value: str | Iterable[Any]):
@@ -86,3 +92,10 @@ def _split_items(value: str | Iterable[Any], delimiter: str, strip: str) -> Iter
         parts = value.split(delimiter) if value.strip(strip) else []
         return (part.strip(strip) for part in parts)
     return value
+
+
+def _cast_by_position(value: str | Iterable[Any], item_types: tuple[Any, ...]) -> tuple[Any, ...]:
+    items = list(_split_items(value, _DELIMITER, _STRIP))
+    if len(items) != len(item_types):
+        raise ValueError(f"expected {len(item_types)} tuple item(s), got {len(items)}")
+    return tuple(cast(item, item_type) for item, item_type in zip(items, item_types, strict=True))

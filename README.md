@@ -123,8 +123,9 @@ A string value:
 | `bool` | `"true"`, `"yes"`, `"on"`, `"1"`, ... | `True` |
 | | `"false"`, `"no"`, `"off"`, `"0"`, `""`, ... | `False` |
 | `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
-| `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
+| `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int, ...]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | any of the above sequences | `""`, `"  "` | `[]` (empty) |
+| `tuple[str, int]` | `"db, 5432"` | `('db', 5432)` |
 | `int`, `float`, or any other type that takes a string | `"5432"` | `5432` |
 | `dict` | `"{\"a\": 1}"` | `ValueError`, as from `dict()` |
 | `bytes`, `bytearray` | `"hi"` | `TypeError`, as from `bytes()` |
@@ -133,6 +134,9 @@ A string value:
   It raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
   Empty items are kept: `"a,,b"` gives `['a', '', 'b']` and `"a,b,"` gives `['a', 'b', '']`.
+- A generic tuple casts by position, as in typing. `tuple[str, int]` takes exactly two items
+  and `tuple[int]` exactly one; another number of items raises `ValueError`.
+  Use `tuple[int, ...]` for any number of items.
 - An empty or whitespace-only string gives an empty sequence, the same as a JSON `[]`.
   The AWS console stores a cleared value as `""`. Other types get the string as is:
   `int` and `float` raise `ValueError`, and a function or a type such as `pathlib.Path` receives `""`.

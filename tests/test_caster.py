@@ -88,7 +88,7 @@ class CasterTestCase(unittest.TestCase):
             (list[int], []),
             (set[int], set()),
             (frozenset[int], frozenset()),
-            (tuple[int], ()),
+            (tuple[int, ...], ()),
         ):
             for value in ("", "  ", "\t\n"):
                 with self.subTest(casting_type=casting_type, value=value):
@@ -110,13 +110,15 @@ class CasterTestCase(unittest.TestCase):
         self.assertEqual([], caster.Sequence(cast_type=int, delimiter=";")("  "))
         self.assertEqual([], caster.Sequence(strip=" -")("--"))
 
-    # KNOWN BUG(B13): only the first type argument is used, so str is ignored.
-    def test_cast_string_to_multi_type_tuple_currently_uses_first_type(self):
-        self.assertEqual((1, 2), caster.cast("1, 2", tuple[int, str]))
+    def test_cast_to_multi_type_tuple_casts_by_position(self):
+        for value in ("1, 2", ["1", 2]):
+            with self.subTest(value=value):
+                self.assertEqual((1, "2"), caster.cast(value, tuple[int, str]))
 
-    # KNOWN BUG(B13): tuple[int] means one item in typing, but every item is cast.
-    def test_cast_string_to_single_type_tuple_currently_casts_every_item(self):
-        self.assertEqual((1, 2), caster.cast("1, 2", tuple[int]))
+    def test_cast_to_tuple_with_wrong_length_raises_value_error(self):
+        for value, casting_type in (("1, 2", tuple[int]), ("1", tuple[int, str]), ("", tuple[int])):
+            with self.subTest(value=value, casting_type=casting_type), self.assertRaises(ValueError):
+                caster.cast(value, casting_type)
 
     def test_cast_string_to_variadic_tuple_casts_each_item(self):
         self.assertEqual((1, 2), caster.cast("1, 2", tuple[int, ...]))

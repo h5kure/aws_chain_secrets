@@ -49,6 +49,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Migration:** pass `casting_type=json.loads`.
 - `casting_type=bool` ignores surrounding whitespace in a string, so `" true "` gives `True`
   and a whitespace-only string gives `False` like `""`. Previously both raised `ValueError`.
+- A generic tuple casts by position, as in typing: `tuple[str, int]` casts `"db, 5432"` to `('db', 5432)`,
+  and the number of items must match, so `tuple[int]` takes exactly one item.
+  Another number of items raises `ValueError`. `tuple[int, ...]` casts any number of items, including none.
+  Previously every item was cast with the first type argument, whatever the number of items.
+  **Affected:** code that uses `tuple[int]` or `tuple[int, str]` for a list of any length.
+  **Migration:** use `tuple[int, ...]` for any number of items of one type.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.
