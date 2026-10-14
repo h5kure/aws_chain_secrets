@@ -1,5 +1,6 @@
 import json
 import string
+from collections.abc import Iterable
 from dataclasses import dataclass
 from types import GenericAlias
 from typing import Any, get_args, get_origin
@@ -29,20 +30,27 @@ def cast_boolean(value: Any) -> bool:
     return string_to_boolean(value)
 
 
-def cast(value: str, casting_type: type[Any] | None = None) -> Any:
+def cast(value: Any, casting_type: type[Any] | None = None) -> Any:
     """
-    string value to typed value
-    :param value: original string
-    :param casting_type: expected type to be
+    secret value to typed value
+    :param value: original value. A string is parsed; any other value is converted with `casting_type(value)`.
+     Generic sequences such as `list[int]` cast each item the same way.
+    :param casting_type: expected type to be. `None` returns the value as is.
     :return: typed value
     """
     if casting_type is None:
         return value
     if casting_type is bool:
+        if not isinstance(value, str):
+            return casting_type(value)
         return cast_boolean(value)
     if casting_type in (set, list, tuple, bytes, bytearray):
+        if not isinstance(value, str):
+            return casting_type(value)
         return Sequence(wrapper=casting_type)(value)
     if casting_type is dict:
+        if not isinstance(value, str):
+            return casting_type(value)
         return json.loads(value)
     if isinstance(casting_type, GenericAlias):
         origin = get_origin(casting_type)
@@ -57,6 +65,7 @@ def cast(value: str, casting_type: type[Any] | None = None) -> Any:
 class Sequence:
     """
     Helper to cast Sequence (list, tuple, bytes, bytearray) and Set(set, frozenset)
+    from a delimited string or from an iterable of items
     """
 
     cast_type: type[Any] = str
@@ -64,5 +73,6 @@ class Sequence:
     strip: str = string.whitespace
     wrapper: type[Any] = list
 
-    def __call__(self, value: str):
-        return self.wrapper(cast(v.strip(self.strip), self.cast_type) for v in value.split(self.delimiter))
+    def __call__(self, value: str | Iterable[Any]):
+        items = (v.strip(self.strip) for v in value.split(self.delimiter)) if isinstance(value, str) else value
+        return self.wrapper(cast(item, self.cast_type) for item in items)

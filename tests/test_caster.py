@@ -20,29 +20,26 @@ class CasterTestCase(unittest.TestCase):
     def test_dict(self):
         self.assertEqual({"foo": "bar"}, caster.cast('{"foo": "bar"}', dict))
 
-    # KNOWN BUG(B8): a JSON array is not a string, so splitting it fails.
-    def test_cast_json_array_to_list_currently_raises_attribute_error(self):
+    def test_cast_json_array_to_list_converts_it(self):
         for casting_type in (list, set, tuple):
-            with self.subTest(casting_type=casting_type), self.assertRaises(AttributeError):
-                caster.cast([1, "a"], casting_type)
+            with self.subTest(casting_type=casting_type):
+                self.assertEqual(casting_type([1, "a"]), caster.cast([1, "a"], casting_type))
 
-    # KNOWN BUG(B8): a JSON array is not a string, so splitting it fails.
-    def test_cast_json_array_to_generic_list_currently_raises_attribute_error(self):
-        with self.assertRaises(AttributeError):
-            caster.cast(["1", 2], list[int])
+    def test_cast_json_array_to_generic_list_casts_each_item(self):
+        self.assertEqual([1, 2], caster.cast(["1", 2], list[int]))
 
-    # KNOWN BUG(B8): a JSON object is not a string, so json.loads fails.
-    def test_cast_json_object_to_dict_currently_raises_type_error(self):
-        with self.assertRaises(TypeError):
-            caster.cast({"a": 1}, dict)
+    def test_cast_json_object_to_dict_returns_copy(self):
+        value = {"a": 1}
 
-    # KNOWN BUG(B8): non-string values are judged by the truth strings of their str().
-    def test_cast_non_string_to_bool_currently_uses_truth_strings(self):
-        for value in (5432, None):
-            with self.subTest(value=value), self.assertRaises(ValueError):
-                caster.cast(value, bool)
-        self.assertIs(True, caster.cast(1, bool))
-        self.assertIs(True, caster.cast(True, bool))
+        result = caster.cast(value, dict)
+
+        self.assertEqual(value, result)
+        self.assertIsNot(value, result)
+
+    def test_cast_non_string_to_bool_uses_python_truthiness(self):
+        for value, expected in ((5432, True), (True, True), (0, False), (None, False)):
+            with self.subTest(value=value):
+                self.assertIs(expected, caster.cast(value, bool))
 
     def test_cast_non_string_float_to_int_truncates(self):
         self.assertEqual(3, caster.cast(3.5, int))

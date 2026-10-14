@@ -45,16 +45,16 @@ python -m pip install aws_chain_secrets
 
 Each secret must hold a JSON object, stored either as `SecretString` or as `SecretBinary` (the raw JSON bytes).
 
-Store values as strings, as the AWS console's key/value editor does.
-Values are cast from strings (see [Type casting](#type-casting)), so other JSON types do not cast as you might expect:
+Values are returned as `str` by default, so other JSON types come back in Python spelling
+(see [Type casting](#type-casting) to convert them):
 
 | Stored value | `secrets(key)` returns | Note |
 |---|---|---|
 | `"5432"` | `'5432'` | |
-| `5432` | `'5432'` | `casting_type=int` still works |
-| `false` | `'False'` | Python spelling; `casting_type=bool` still works |
-| `[1, 2]` | `'[1, 2]'` | `casting_type=list` fails; store `"1,2"` instead |
-| `{"a": 1}` | `"{'a': 1}"` | `casting_type=dict` fails; store `"{\"a\": 1}"` instead |
+| `5432` | `'5432'` | `casting_type=int` gives `5432` |
+| `false` | `'False'` | Python spelling; `casting_type=bool` gives `False` |
+| `[1, 2]` | `'[1, 2]'` | `casting_type=list` gives `[1, 2]` |
+| `{"a": 1}` | `"{'a': 1}"` | Python spelling; `casting_type=dict` gives `{'a': 1}` |
 
 ## Usage
 
@@ -103,7 +103,9 @@ secrets("TIMEOUT", default=30, casting_type=int)
 
 Values are returned as `str` by default. Pass `casting_type` to convert them.
 
-| `casting_type` | Input | Result |
+A string value is parsed:
+
+| `casting_type` | Stored value | Result |
 |---|---|---|
 | `int`, `float`, or any type that takes a string | `"5432"` | `5432` |
 | `bool` | `"true"`, `"yes"`, `"on"`, `"1"`, ... | `True` |
@@ -114,6 +116,20 @@ Values are returned as `str` by default. Pass `casting_type` to convert them.
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
+
+Any other JSON value is converted with `casting_type(value)`, as Python does:
+
+| `casting_type` | Stored value | Result |
+|---|---|---|
+| `int` | `3.5` | `3` |
+| `bool` | `5432` | `True` |
+| | `0`, `null` | `False` |
+| `list`, `set`, `tuple` | `[1, "a"]` | `[1, 'a']` |
+| `dict` | `{"a": 1}` | `{'a': 1}` (a copy) |
+| `str` | `false` | `'False'` |
+
+- Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.
+- `str` uses Python's `str()`, not JSON spelling.
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 ### Changing values

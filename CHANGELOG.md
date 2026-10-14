@@ -21,6 +21,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Affected:** binary secrets that hold base64 text, for example stored with `SecretBinary=base64.b64encode(...)`
   or with AWS CLI v1 `--secret-binary "<base64>"`. Reading them now fails with `ValueError`.
   **Migration:** store the JSON bytes themselves as `SecretBinary`, or store the JSON as `SecretString`.
+- `casting_type` converts a value that is not a JSON string with `casting_type(value)`, as Python does.
+  Strings are parsed as before. `bool` follows Python truthiness for such values:
+  `5432` gives `True` and `null` gives `False`, where both raised `ValueError` before.
+  **Affected:** code that relied on that `ValueError` from `casting_type=bool` for a non-string value.
+  **Migration:** check the value yourself before casting, or store the flag as a string such as `"true"`.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.
@@ -29,3 +34,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The wheel no longer installs a top-level `tests` package.
 - `fetch()` and `update()` raise `RuntimeError` without a connection,
   instead of an `AttributeError` about `NoneType`.
+- `casting_type=list`, `set`, `tuple` and generic sequences such as `list[int]` convert JSON arrays,
+  casting each item for generic sequences. Previously they failed with `AttributeError`.
+- `casting_type=dict` returns a copy of a JSON object. Previously it failed with `TypeError`.
