@@ -1,3 +1,4 @@
+import base64
 import unittest
 
 from aws_chain_secrets import caster
@@ -66,3 +67,7 @@ class CasterTestCase(unittest.TestCase):
 
     def test_cast_string_to_generic_frozenset_casts_each_item(self):
         self.assertEqual(frozenset({1, 2}), caster.cast("1,2", frozenset[int]))
+
+    def test_cast_with_function_applies_it(self):
+        self.assertEqual(b"hi", caster.cast("aGk=", base64.b64decode))
+        self.assertEqual(b"hi", caster.cast("6869", bytes.fromhex))

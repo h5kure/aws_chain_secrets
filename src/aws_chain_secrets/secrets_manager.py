@@ -1,6 +1,6 @@
 import json
 from collections import ChainMap
-from collections.abc import ItemsView, KeysView, ValuesView
+from collections.abc import Callable, ItemsView, KeysView, ValuesView
 from types import GenericAlias
 from typing import Any
 
@@ -41,12 +41,13 @@ class SecretsManager(Client):
         self._secrets: dict[str, dict[str, Any]] = {secret_name: {} for secret_name in secret_names}
         self._combined = ChainMap(*reversed(self._secrets.values()))
 
-    def get(self, key: str, *, default: Any = null, casting_type: type[Any] | GenericAlias | None = None):
+    def get(self, key: str, *, default: Any = null, casting_type: Callable[[Any], Any] | GenericAlias | None = None):
         """
         get secret value
         :param key: key value to search
         :param default: default value if key not exists in secrets
-        :param casting_type: casting type to convert value. `None` returns the stored value as is (not a copy).
+        :param casting_type: a type, or a function that takes the value, to convert it with.
+         `None` returns the stored value as is (not a copy).
         :return: Any secret value specified by key
         """
         try:

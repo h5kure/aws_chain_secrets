@@ -107,7 +107,7 @@ secrets("TIMEOUT", default=30, casting_type=int)
 
 ### Type casting
 
-Pass `casting_type` to convert a value.
+Pass a type, or a function that takes the value, as `casting_type` to convert a value.
 
 A string value is parsed:
 
@@ -123,7 +123,7 @@ A string value is parsed:
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
-- `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded.
+- `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded; pass a function for it.
 
 Any other JSON value is converted with `casting_type(value)`, as Python does:
 
@@ -140,6 +140,16 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 - Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.
 - `str` uses Python's `str()`, not JSON spelling. For JSON text, use `json.dumps(secrets(key))`.
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
+
+A function is called with the stored value as is.
+Use one for formats the library does not guess, such as base64 or hex text:
+
+```python
+import base64
+
+secrets("TLS_KEY", casting_type=base64.b64decode)  # "aGk=" -> b'hi'
+secrets("API_SALT", casting_type=bytes.fromhex)  # "6869" -> b'hi'
+```
 
 ### Changing values
 

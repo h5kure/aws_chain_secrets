@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- `casting_type` accepts a function that takes the value, such as `base64.b64decode` or `bytes.fromhex`.
+  It is called with the stored value as is. Type annotations now allow it.
+
 ### Changed
 - Python 3.10 or later is required.
 - `set(None, key, value)` writes to the highest-priority secret that has `key`.

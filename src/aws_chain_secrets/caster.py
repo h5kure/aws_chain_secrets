@@ -1,6 +1,6 @@
 import json
 import string
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from types import GenericAlias
 from typing import Any, get_args, get_origin
@@ -31,12 +31,13 @@ def cast_boolean(value: Any) -> bool:
     return string_to_boolean(value)
 
 
-def cast(value: Any, casting_type: type[Any] | GenericAlias | None = None) -> Any:
+def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = None) -> Any:
     """
     secret value to typed value
     :param value: original value. A string is parsed; any other value is converted with `casting_type(value)`.
      Generic sequences such as `list[int]` cast each item the same way.
-    :param casting_type: expected type to be. `None` returns the value as is.
+    :param casting_type: a type, or a function that takes the value such as `base64.b64decode`.
+     `None` returns the value as is.
     :return: typed value
     """
     if casting_type is None:
@@ -67,7 +68,7 @@ class Sequence:
     from a delimited string or from an iterable of items
     """
 
-    cast_type: type[Any] = str
+    cast_type: Callable[[Any], Any] | GenericAlias = str
     delimiter: str = ","
     strip: str = string.whitespace
     wrapper: type[Any] = list
