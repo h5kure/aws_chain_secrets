@@ -57,13 +57,10 @@ class CasterTestCase(unittest.TestCase):
         self.assertEqual("False", caster.cast(False, str))
         self.assertEqual("{'a': 1}", caster.cast({"a": 1}, str))
 
-    def test_cast_string_to_bytes_encodes_it_as_utf8(self):
+    def test_cast_string_to_bytes_raises_type_error(self):
         for casting_type in (bytes, bytearray):
-            with self.subTest(casting_type=casting_type):
-                self.assertEqual(b"h\xc3\xa9llo", caster.cast("héllo", casting_type))
-
-    def test_cast_string_to_bytes_does_not_decode_base64(self):
-        self.assertEqual(b"aGk=", caster.cast("aGk=", bytes))
+            with self.subTest(casting_type=casting_type), self.assertRaises(TypeError):
+                caster.cast("hi", casting_type)
 
     def test_cast_string_to_frozenset_splits_it(self):
         self.assertEqual(frozenset({"a", "b"}), caster.cast("a, b", frozenset))
@@ -75,6 +72,7 @@ class CasterTestCase(unittest.TestCase):
         self.assertEqual(b"hi", caster.cast("aGk=", base64.b64decode))
         self.assertEqual(b"hi", caster.cast("6869", bytes.fromhex))
         self.assertEqual({"a": 1}, caster.cast('{"a": 1}', json.loads))
+        self.assertEqual(b"h\xc3\xa9llo", caster.cast("héllo", str.encode))
 
     def test_cast_blank_string_to_sequence_returns_empty_container(self):
         for casting_type, expected in (

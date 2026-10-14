@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- `casting_type` accepts a function that takes the value, such as `base64.b64decode` or `bytes.fromhex`.
+- `casting_type` accepts a function that takes the value, such as `json.loads`, `str.encode` or `base64.b64decode`.
   It is called with the stored value as is. Type annotations now allow it.
 
 ### Changed
@@ -58,7 +58,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `casting_type=list`, `set`, `tuple` and generic sequences such as `list[int]` convert JSON arrays,
   casting each item for generic sequences. Previously they failed with `AttributeError`.
 - `casting_type=dict` returns a copy of a JSON object. Previously it failed with `TypeError`.
-- `casting_type=bytes` and `bytearray` encode a string value as UTF-8.
-  Previously they always failed with `TypeError`.
 - `casting_type=frozenset` and `frozenset[int]` split a string value on `,` like `set`.
   Previously `frozenset` split it into characters and `frozenset[int]` raised `NotImplementedError`.

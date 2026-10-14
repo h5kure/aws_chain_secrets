@@ -53,8 +53,6 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
         return cast_boolean(value)
     if casting_type in _SEQUENCE_TYPES:
         return Sequence(wrapper=casting_type)(value)
-    if casting_type in (bytes, bytearray):
-        return casting_type(value.encode())
     return casting_type(value)
 
 

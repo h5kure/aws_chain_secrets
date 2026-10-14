@@ -119,7 +119,6 @@ A string value is parsed:
 | `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
 | `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | any of the above sequences | `""`, `"  "` | `[]` (empty) |
-| `bytes`, `bytearray` | `"hi"` | `b'hi'` |
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
@@ -127,7 +126,6 @@ A string value is parsed:
 - An empty or whitespace-only string gives an empty sequence, the same as a JSON `[]`.
   The AWS console stores a cleared value as `""`. Other types get the string as is:
   `int` and `float` raise `ValueError`, and a function or a type such as `pathlib.Path` receives `""`.
-- `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded; pass a function for it.
 
 Any other JSON value is converted with `casting_type(value)`, as Python does:
 
@@ -144,19 +142,22 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 
 - Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.
 - `str` uses Python's `str()`, not JSON spelling. For JSON text, use `json.dumps(secrets(key))`.
-- `bytes` and `bytearray` treat a number as a length, so store bytes as a string or a list of integers.
+- `bytes` and `bytearray` treat a number as a length, so store bytes as a list of integers,
+  or as text read with a function below.
 - Other generic types, such as `dict[str, int]`, raise `NotImplementedError`.
 
 A function is called with the stored value as is.
 Use one for formats the library does not guess, such as JSON, base64 or hex text.
 A comma-separated string reads with `list`; JSON text such as `"[1, 2]"` or `"{\"a\": 1}"` reads with `json.loads`.
 `dict` does not parse JSON: like Python's `dict()`, it raises `ValueError` for such a string.
+Likewise `bytes` raises `TypeError` for a string; pass `str.encode` to encode it as UTF-8.
 
 ```python
 import base64
 import json
 
 secrets("FEATURES", casting_type=json.loads)  # '{"beta": true}' -> {'beta': True}
+secrets("SIGNING_KEY", casting_type=str.encode)  # "héllo" -> b'h\xc3\xa9llo'
 secrets("TLS_KEY", casting_type=base64.b64decode)  # "aGk=" -> b'hi'
 secrets("API_SALT", casting_type=bytes.fromhex)  # "6869" -> b'hi'
 ```
