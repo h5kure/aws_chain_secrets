@@ -76,6 +76,7 @@ version = "1.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "boto3" },
+    { name = "botocore" },
 ]
 
 [package.dev-dependencies]
@@ -87,7 +88,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "boto3" }]
+requires-dist = [
+    { name = "boto3", specifier = ">=1.26.13" },
+    { name = "botocore", specifier = ">=1.29.13" },
+]
 
 [package.metadata.requires-dev]
 dev = [

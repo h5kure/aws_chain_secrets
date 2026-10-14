@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - Python 3.10 or later is required.
+- boto3 1.26.13 and botocore 1.29.13 or later are required. Earlier botocore fails to import on Python 3.13,
+  and botocore before 1.27.6 has no `close()` for `Client.disconnect()`. Previously any version was accepted.
 - `set(None, key, value)` writes to the highest-priority secret that has `key`.
   Previously it wrote to the lowest-priority one, so `get(key)` kept returning the old value.
 - `SecretsManagerException.from_code()` raises `TypeError` for an unhashable `code`.

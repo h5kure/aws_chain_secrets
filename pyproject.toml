@@ -19,7 +19,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
-dependencies = ["boto3"]
+# botocore is imported directly. 1.29.13 is the first botocore with BaseClient.close() that imports on
+# Python 3.13 or later, which removed `cgi`; boto3 1.26.13 is the first boto3 that requires it.
+dependencies = ["boto3>=1.26.13", "botocore>=1.29.13"]
 
 [project.urls]
 Homepage = "https://github.com/h5kure/aws_chain_secrets"
