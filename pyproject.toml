@@ -5,19 +5,26 @@ build-backend = "hatchling.build"
 [project]
 name = "aws_chain_secrets"
 version = "1.0.3"
-description = "This aims to enable the use of one or more secrets from AWS SecretsManager."
+description = "Read several AWS Secrets Manager secrets as one key-value store."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Hyouk Oh", email = "h.5.kure@gmail.com" }]
 requires-python = ">=3.10"
+keywords = ["aws", "secrets-manager", "secrets", "boto3", "chainmap", "configuration"]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
 ]
 # botocore is imported directly. 1.29.13 is the first botocore with BaseClient.close() that imports on
 # Python 3.13 or later, which removed `cgi`; boto3 1.26.13 is the first boto3 that requires it.
@@ -25,6 +32,9 @@ dependencies = ["boto3>=1.26.13", "botocore>=1.29.13"]
 
 [project.urls]
 Homepage = "https://github.com/h5kure/aws_chain_secrets"
+Source = "https://github.com/h5kure/aws_chain_secrets"
+Changelog = "https://github.com/h5kure/aws_chain_secrets/blob/main/CHANGELOG.md"
+Issues = "https://github.com/h5kure/aws_chain_secrets/issues"
 
 [dependency-groups]
 dev = [
@@ -38,7 +48,7 @@ dev = [
 packages = ["src/aws_chain_secrets"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src", "/tests", "/README.md", "/LICENSE"]
+include = ["/src", "/tests", "/README.md", "/CHANGELOG.md", "/LICENSE"]
 
 [tool.pytest]
 testpaths = ["tests"]
