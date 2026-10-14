@@ -118,11 +118,17 @@ A string value is parsed:
 | | `"false"`, `"no"`, `"off"`, `"0"`, `""`, ... | `False` |
 | `list`, `set`, `frozenset`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
 | `list[int]`, `set[int]`, `frozenset[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
+| any of the above sequences | `""`, `"  "` | `[]` (empty) |
 | `dict` | `"{\"a\": 1}"` | `{'a': 1}` |
+| | `""`, `"  "` | `{}` |
 | `bytes`, `bytearray` | `"hi"` | `b'hi'` |
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
+  Empty items are kept: `"a,,b"` gives `['a', '', 'b']` and `"a,b,"` gives `['a', 'b', '']`.
+- An empty or whitespace-only string gives an empty sequence or `dict`, the same as a JSON `[]` or `{}`.
+  The AWS console stores a cleared value as `""`. Other types get the string as is:
+  `int` and `float` raise `ValueError`, and a function or a type such as `pathlib.Path` receives `""`.
 - `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded; pass a function for it.
 
 Any other JSON value is converted with `casting_type(value)`, as Python does:

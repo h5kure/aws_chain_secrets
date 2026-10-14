@@ -37,6 +37,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **Affected:** code that reads a non-string value without `casting_type` and expects a string,
   for example the numeric `port` of a secret managed by Amazon RDS.
   **Migration:** pass `casting_type=str`, or use the value with its JSON type.
+- `casting_type=list`, `set`, `frozenset`, `tuple`, generic sequences such as `list[int]`, and `dict`
+  return an empty container for an empty or whitespace-only string, as for a JSON `[]` or `{}`.
+  The AWS console stores a cleared value as `""`. Previously sequences gave one empty item such as `['']`,
+  generic sequences raised `ValueError` and `dict` raised `json.JSONDecodeError`.
+  **Affected:** code that expects `['']` for a cleared value, or catches those errors to detect it.
+  **Migration:** treat an empty container as unset, or read the value with `casting_type=None` and check for `""`.
 
 ### Fixed
 - `InvalidParameterException()` has a string default message instead of a tuple.

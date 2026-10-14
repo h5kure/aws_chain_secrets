@@ -57,7 +57,7 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
     if casting_type in (bytes, bytearray):
         return casting_type(value.encode())
     if casting_type is dict:
-        return json.loads(value)
+        return json.loads(value) if value.strip() else {}
     return casting_type(value)
 
 
@@ -65,7 +65,8 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
 class Sequence:
     """
     Helper to cast Sequence (list, tuple) and Set(set, frozenset)
-    from a delimited string or from an iterable of items
+    from a delimited string or from an iterable of items.
+    A blank string gives an empty container.
     """
 
     cast_type: Callable[[Any], Any] | GenericAlias = str
@@ -74,5 +75,7 @@ class Sequence:
     wrapper: type[Any] = list
 
     def __call__(self, value: str | Iterable[Any]):
-        items = (v.strip(self.strip) for v in value.split(self.delimiter)) if isinstance(value, str) else value
-        return self.wrapper(cast(item, self.cast_type) for item in items)
+        if isinstance(value, str):
+            parts = value.split(self.delimiter) if value.strip(self.strip) else []
+            value = (v.strip(self.strip) for v in parts)
+        return self.wrapper(cast(item, self.cast_type) for item in value)
