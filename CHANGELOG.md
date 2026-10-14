@@ -44,3 +44,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `casting_type=list`, `set`, `tuple` and generic sequences such as `list[int]` convert JSON arrays,
   casting each item for generic sequences. Previously they failed with `AttributeError`.
 - `casting_type=dict` returns a copy of a JSON object. Previously it failed with `TypeError`.
+- `casting_type=bytes` and `bytearray` encode a string value as UTF-8.
+  Previously they always failed with `TypeError`.

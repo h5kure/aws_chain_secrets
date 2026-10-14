@@ -119,9 +119,11 @@ A string value is parsed:
 | `list`, `set`, `tuple` | `"a, b, c"` | `['a', 'b', 'c']` |
 | `list[int]`, `set[int]`, `tuple[int]` | `"1, 2, 3"` | `[1, 2, 3]` |
 | `dict` | `"{\"a\": 1}"` | `{'a': 1}` |
+| `bytes`, `bytearray` | `"hi"` | `b'hi'` |
 
 - `bool` is case-insensitive and raises `ValueError` for any other string.
 - Sequences are split on `,` and each item is stripped of surrounding whitespace.
+- `bytes` and `bytearray` encode the string as UTF-8. Base64 or hex text is not decoded.
 
 Any other JSON value is converted with `casting_type(value)`, as Python does:
 
@@ -132,6 +134,7 @@ Any other JSON value is converted with `casting_type(value)`, as Python does:
 | | `0`, `null` | `False` |
 | `list`, `set`, `tuple` | `[1, "a"]` | `[1, 'a']` |
 | `dict` | `{"a": 1}` | `{'a': 1}` (a copy) |
+| `bytes` | `[104, 105]` | `b'hi'` |
 | `str` | `false` | `'False'` |
 
 - Generic sequences such as `list[int]` cast each item by these rules, so `["1", 2]` gives `[1, 2]`.

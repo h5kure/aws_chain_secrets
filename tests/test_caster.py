@@ -53,11 +53,13 @@ class CasterTestCase(unittest.TestCase):
         self.assertEqual("False", caster.cast(False, str))
         self.assertEqual("{'a': 1}", caster.cast({"a": 1}, str))
 
-    # KNOWN BUG(B9): bytes is treated as a container, so it becomes bytes(["hi"]).
-    def test_cast_string_to_bytes_currently_raises_type_error(self):
+    def test_cast_string_to_bytes_encodes_it_as_utf8(self):
         for casting_type in (bytes, bytearray):
-            with self.subTest(casting_type=casting_type), self.assertRaises(TypeError):
-                caster.cast("hi", casting_type)
+            with self.subTest(casting_type=casting_type):
+                self.assertEqual(b"h\xc3\xa9llo", caster.cast("héllo", casting_type))
+
+    def test_cast_string_to_bytes_does_not_decode_base64(self):
+        self.assertEqual(b"aGk=", caster.cast("aGk=", bytes))
 
     # KNOWN BUG(B10): frozenset is not in the sequence types, so frozenset("a,b") splits it into characters.
     def test_cast_string_to_frozenset_currently_splits_into_characters(self):

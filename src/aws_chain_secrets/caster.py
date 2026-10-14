@@ -50,8 +50,10 @@ def cast(value: Any, casting_type: type[Any] | GenericAlias | None = None) -> An
         return casting_type(value)
     if casting_type is bool:
         return cast_boolean(value)
-    if casting_type in (set, list, tuple, bytes, bytearray):
+    if casting_type in (set, list, tuple):
         return Sequence(wrapper=casting_type)(value)
+    if casting_type in (bytes, bytearray):
+        return casting_type(value.encode())
     if casting_type is dict:
         return json.loads(value)
     return casting_type(value)
@@ -60,7 +62,7 @@ def cast(value: Any, casting_type: type[Any] | GenericAlias | None = None) -> An
 @dataclass
 class Sequence:
     """
-    Helper to cast Sequence (list, tuple, bytes, bytearray) and Set(set, frozenset)
+    Helper to cast Sequence (list, tuple) and Set(set, frozenset)
     from a delimited string or from an iterable of items
     """
 
