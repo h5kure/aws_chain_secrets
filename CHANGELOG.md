@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   It is called with the stored value as is. Type annotations now allow it.
 - `SecretsManagerException` and its subclasses can be imported from `aws_chain_secrets`,
   which now defines `__all__`.
+- `aws_chain_secrets.caster.Sequence` is documented as a `casting_type` for sequences with another delimiter,
+  for example `Sequence(cast_type=int, delimiter=";")`.
 
 ### Changed
 - Python 3.10 or later is required.
@@ -57,6 +59,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Previously every item was cast with the first type argument, whatever the number of items.
   **Affected:** code that uses `tuple[int]` or `tuple[int, str]` for a list of any length.
   **Migration:** use `tuple[int, ...]` for any number of items of one type.
+- `aws_chain_secrets.caster.Sequence` takes its fields as keyword arguments only.
+  **Affected:** code that passes them by position, such as `Sequence(int)`.
+  **Migration:** name them, as in `Sequence(cast_type=int)`.
 
 ### Removed
 - `aws_chain_secrets.caster.cast_boolean()`. It converted any value with `str()` before reading it as a truth value.

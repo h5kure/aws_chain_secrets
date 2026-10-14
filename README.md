@@ -173,6 +173,22 @@ secrets("TLS_KEY", casting_type=base64.b64decode)  # "aGk=" -> b'hi'
 secrets("API_SALT", casting_type=bytes.fromhex)  # "6869" -> b'hi'
 ```
 
+For a sequence with another delimiter, pass `Sequence` from `aws_chain_secrets.caster`:
+
+```python
+from aws_chain_secrets.caster import Sequence
+
+secrets("PORTS", casting_type=Sequence(cast_type=int, delimiter=";"))  # "80; 443" -> [80, 443]
+secrets("TAGS", casting_type=Sequence(cast_type=str.lower, wrapper=set))  # "A, b" -> {'a', 'b'}
+```
+
+Its fields are keyword-only:
+
+- `cast_type`: a type, or a function, for each item, cast by the rules above. Default `str`.
+- `delimiter`: the string to split on. Default `","`.
+- `strip`: characters stripped from both ends of each item. Default whitespace.
+- `wrapper`: the container type, such as `list`, `set`, `frozenset` or `tuple`. Default `list`.
+
 ### Changing values
 
 `set()` changes a value locally. It does not touch AWS until you call `update()`.

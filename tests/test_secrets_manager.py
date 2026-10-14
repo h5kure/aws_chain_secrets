@@ -8,6 +8,7 @@ from botocore.exceptions import ClientError
 from botocore.stub import Stubber
 
 from aws_chain_secrets import SecretsManager
+from aws_chain_secrets.caster import Sequence
 from aws_chain_secrets.exceptions import (
     ResourceNotFoundException,
     SecretsManagerException,
@@ -137,6 +138,11 @@ class SecretsManagerTestCase(unittest.TestCase):
         secrets = self._enter({"app": {"port": "5432"}})
 
         self.assertEqual(5432, secrets.get("port", casting_type=int))
+
+    def test_get_with_sequence_uses_its_delimiter(self):
+        secrets = self._enter({"app": {"ports": "1; 2"}})
+
+        self.assertEqual([1, 2], secrets.get("ports", casting_type=Sequence(cast_type=int, delimiter=";")))
 
     def test_get_returns_stored_value_by_default(self):
         secrets = self._enter({"app": {"host": "localhost", "port": 5432, "debug": False}})

@@ -122,3 +122,7 @@ class CasterTestCase(unittest.TestCase):
 
     def test_cast_string_to_variadic_tuple_casts_each_item(self):
         self.assertEqual((1, 2), caster.cast("1, 2", tuple[int, ...]))
+
+    def test_sequence_rejects_positional_fields(self):
+        with self.assertRaises(TypeError):
+            caster.Sequence(int)

@@ -60,11 +60,12 @@ def cast(value: Any, casting_type: Callable[[Any], Any] | GenericAlias | None = 
     return casting_type(value)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Sequence:
     """
-    Helper to cast Sequence (list, tuple) and Set(set, frozenset)
-    from a delimited string or from an iterable of items.
+    A `casting_type` that builds `wrapper` from a delimited string or from an iterable of items,
+    casting each item with `cast_type` by the rules of `cast()`.
+    A string is split on `delimiter` and each item is stripped of the characters in `strip`.
     A blank string gives an empty container.
     """
 
