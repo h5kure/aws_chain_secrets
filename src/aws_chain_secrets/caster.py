@@ -40,24 +40,20 @@ def cast(value: Any, casting_type: type[Any] | None = None) -> Any:
     """
     if casting_type is None:
         return value
-    if casting_type is bool:
-        if not isinstance(value, str):
-            return casting_type(value)
-        return cast_boolean(value)
-    if casting_type in (set, list, tuple, bytes, bytearray):
-        if not isinstance(value, str):
-            return casting_type(value)
-        return Sequence(wrapper=casting_type)(value)
-    if casting_type is dict:
-        if not isinstance(value, str):
-            return casting_type(value)
-        return json.loads(value)
     if isinstance(casting_type, GenericAlias):
         origin = get_origin(casting_type)
         args = get_args(casting_type)
         if origin in (set, list, tuple, bytes, bytearray):
             return Sequence(cast_type=args[0] if args else str, wrapper=origin)(value)
         raise NotImplementedError(f"cannot cast to {casting_type!r}")
+    if not isinstance(value, str):
+        return casting_type(value)
+    if casting_type is bool:
+        return cast_boolean(value)
+    if casting_type in (set, list, tuple, bytes, bytearray):
+        return Sequence(wrapper=casting_type)(value)
+    if casting_type is dict:
+        return json.loads(value)
     return casting_type(value)
 
 
