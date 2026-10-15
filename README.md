@@ -279,6 +279,14 @@ uv run ruff format --check
 uv run mypy
 ```
 
+To test with another Python version without replacing `.venv`, run in a temporary environment:
+
+```bash
+uv run --isolated --python 3.10 pytest
+```
+
+See [RELEASING.md](https://github.com/h5kure/aws_chain_secrets/blob/main/RELEASING.md) for publishing a release.
+
 ## License
 
 [MIT](https://github.com/h5kure/aws_chain_secrets/blob/main/LICENSE)
