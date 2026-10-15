@@ -6,6 +6,8 @@ on:
 
 permissions: {}
 
+# No concurrency group on purpose: cancelling a run midway could leave a partial upload to PyPI.
+
 env:
   UV_VERSION: "0.13.0"
 
